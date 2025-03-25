@@ -5,5 +5,8 @@
     "@mui/material": "^6.4.8",
     "firebase": "^11.5.0",
     "react-router-dom": "^7.4.0"
+  },
+  "devDependencies": {
+    "@types/material-ui": "^0.21.18"
   }
 }
