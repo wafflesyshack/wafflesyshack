@@ -1,8 +1,9 @@
 'use client';
+
 import { useState } from 'react';
-import { auth } from '../libs/firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import styles from './AuthTab.module.css'; // スタイルをインポート
+import { auth, googleProvider } from '../libs/firebase';
+import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import styles from './AuthTab.module.css';
 
 interface SignupFormProps {
   onSignupSuccess: () => void;
@@ -23,8 +24,23 @@ export default function SignupForm({ onSignupSuccess }: SignupFormProps) {
     }
   };
 
+  const handleGoogleSignup = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+      onSignupSuccess();
+    } catch (error) {
+      console.error('Googleサインアップエラー:', error);
+    }
+  };
+
   return (
     <form onSubmit={handleSignup} className={styles.signupForm}>
+      <button
+        onClick={handleGoogleSignup}
+        className={`${styles.button} ${styles.googleButton}`}
+      >
+        Googleでサインアップ
+      </button>
       <input
         type="email"
         placeholder="メールアドレス"

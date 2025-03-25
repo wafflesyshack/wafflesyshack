@@ -4,10 +4,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
-import styles from './AuthTab.module.css'; // スタイルをインポート
+import styles from './AuthTab.module.css';
 
 export default function AuthTabs() {
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
+  const [showEmailLogin, setShowEmailLogin] = useState(false); // メールログインの表示状態
+
   const router = useRouter();
 
   const handleLoginSuccess = () => {
@@ -20,14 +22,15 @@ export default function AuthTabs() {
 
   return (
     <div className={styles.container}>
-      {' '}
-      {/* スタイルを適用 */}
       <div className={styles.tabButtons}>
         <button
           className={`${styles.tabButton} ${
             activeTab === 'login' ? styles.tabButtonActive : ''
           }`}
-          onClick={() => setActiveTab('login')}
+          onClick={() => {
+            setActiveTab('login');
+            setShowEmailLogin(false); // ログインタブ選択時にメールログインを非表示にする
+          }}
         >
           ログイン
         </button>
@@ -41,7 +44,11 @@ export default function AuthTabs() {
         </button>
       </div>
       {activeTab === 'login' ? (
-        <LoginForm onLoginSuccess={handleLoginSuccess} />
+        <LoginForm
+          onLoginSuccess={handleLoginSuccess}
+          showEmailLogin={showEmailLogin}
+          setShowEmailLogin={setShowEmailLogin} // setShowEmailLogin を渡す
+        />
       ) : (
         <SignupForm onSignupSuccess={handleSignupSuccess} />
       )}
