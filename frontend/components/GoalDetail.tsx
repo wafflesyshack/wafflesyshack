@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import styles from './goalDetail.module.css';
+import styles from './GoalDetail.module.css';
 import Image from 'next/image';
 import backgroundImage from '../../../public/images/background.jpg';
-import GoalCard from '../../../components/GoalCard';
-import Calendar from '../../../components/Calender';
+import GoalCard from './GoalCard';
+import Calendar from './Calendar';
 
 const GoalDetail: React.FC = () => {
   return (

@@ -1,0 +1,31 @@
+.goalCard {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  padding: 20px;
+  width: 200px;
+  margin: 20px;
+}
+
+.goalTitle {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.goalButton {
+  background-color: #0070f3;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.goalProgress {
+  display: flex;
+  justify-content: space-between;
+}
+
+.progressItem {
+  text-align: center;
+}
