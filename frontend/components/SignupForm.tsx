@@ -1,7 +1,9 @@
 'use client';
+
 import { useState } from 'react';
-import { auth } from '../libs/firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth, googleProvider } from '../libs/firebase';
+import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import styles from './AuthTab.module.css';
 
 interface SignupFormProps {
   onSignupSuccess: () => void;
@@ -22,25 +24,40 @@ export default function SignupForm({ onSignupSuccess }: SignupFormProps) {
     }
   };
 
+  const handleGoogleSignup = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+      onSignupSuccess();
+    } catch (error) {
+      console.error('Googleサインアップエラー:', error);
+    }
+  };
+
   return (
-    <form onSubmit={handleSignup} className="space-y-2">
+    <form onSubmit={handleSignup} className={styles.signupForm}>
+      <button
+        onClick={handleGoogleSignup}
+        className={`${styles.button} ${styles.googleButton}`}
+      >
+        Googleでサインアップ
+      </button>
       <input
         type="email"
         placeholder="メールアドレス"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="border rounded px-2 py-1 w-full"
+        className={styles.input}
       />
       <input
         type="password"
         placeholder="パスワード"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        className="border rounded px-2 py-1 w-full"
+        className={styles.input}
       />
       <button
         type="submit"
-        className="bg-green-500 text-white px-4 py-2 rounded w-full"
+        className={`${styles.button} ${styles.emailButton}`}
       >
         新規登録
       </button>

@@ -1,4 +1,5 @@
 'use client';
+
 import { useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, googleProvider } from '../libs/firebase';
@@ -8,12 +9,19 @@ import {
   signOut,
 } from 'firebase/auth';
 import { useEffect } from 'react';
+import styles from './AuthTab.module.css';
 
 interface LoginFormProps {
   onLoginSuccess: () => void;
+  showEmailLogin: boolean;
+  setShowEmailLogin: (show: boolean) => void;
 }
 
-export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
+export default function LoginForm({
+  onLoginSuccess,
+  showEmailLogin,
+  setShowEmailLogin,
+}: LoginFormProps) {
   const [user] = useAuthState(auth);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -59,35 +67,45 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className={styles.loginForm}>
       <button
         onClick={handleGoogleLogin}
-        className="bg-blue-500 text-white px-4 py-2 rounded w-full"
+        className={`${styles.button} ${styles.googleButton}`}
       >
         Googleでログイン
       </button>
-      <form onSubmit={handleEmailLogin} className="space-y-2">
-        <input
-          type="email"
-          placeholder="メールアドレス"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="border rounded px-2 py-1 w-full"
-        />
-        <input
-          type="password"
-          placeholder="パスワード"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="border rounded px-2 py-1 w-full"
-        />
+      {!showEmailLogin && (
         <button
-          type="submit"
-          className="bg-green-500 text-white px-4 py-2 rounded w-full"
+          onClick={() => setShowEmailLogin(true)}
+          className={`${styles.button} ${styles.emailButton}`}
         >
           メールでログイン
         </button>
-      </form>
+      )}
+      {showEmailLogin && (
+        <form onSubmit={handleEmailLogin} className={styles.loginForm}>
+          <input
+            type="email"
+            placeholder="メールアドレス"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={styles.input}
+          />
+          <input
+            type="password"
+            placeholder="パスワード"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className={styles.input}
+          />
+          <button
+            type="submit"
+            className={`${styles.button} ${styles.emailButton}`}
+          >
+            メールでログイン
+          </button>
+        </form>
+      )}
     </div>
   );
 }

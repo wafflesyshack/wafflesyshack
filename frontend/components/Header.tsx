@@ -5,6 +5,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../libs/firebase';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
+import styles from './AuthTab.module.css'; // スタイルをインポート
 
 const Header = () => {
   const [user] = useAuthState(auth);
@@ -24,13 +25,13 @@ const Header = () => {
         {user ? (
           <button
             onClick={handleLogout}
-            className="bg-red-500 text-white px-4 py-2 rounded"
+            className={`${styles.button} ${styles.logoutButton}`}
           >
             ログアウト
           </button>
         ) : (
           <Link href="/login">
-            <span className="bg-blue-500 text-white px-4 py-2 rounded">
+            <span className={`${styles.button} ${styles.emailButton}`}>
               ログイン
             </span>
           </Link>

@@ -1,11 +1,12 @@
-// app/auth/page.tsx
+// app/login/page.tsx
 import AuthTabs from '../../../components/AuthTab';
+import styles from './login.module.css'; // スタイルをインポート
 
 const AuthPage = () => {
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">認証</h1>
-      {/* AuthTabsコンポーネントを表示 */}
+    <div className={styles.container}>
+      {' '}
+      {/* スタイルを適用 */}
       <AuthTabs />
     </div>
   );
