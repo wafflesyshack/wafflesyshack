@@ -1,9 +1,10 @@
-'use client'; // クライアントコンポーネントとして指定
+'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
+import styles from './AuthTab.module.css'; // スタイルをインポート
 
 export default function AuthTabs() {
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
@@ -18,19 +19,21 @@ export default function AuthTabs() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className="flex mb-4">
+    <div className={styles.container}>
+      {' '}
+      {/* スタイルを適用 */}
+      <div className={styles.tabButtons}>
         <button
-          className={`flex-1 py-2 ${
-            activeTab === 'login' ? 'border-b-2 border-blue-500' : ''
+          className={`${styles.tabButton} ${
+            activeTab === 'login' ? styles.tabButtonActive : ''
           }`}
           onClick={() => setActiveTab('login')}
         >
           ログイン
         </button>
         <button
-          className={`flex-1 py-2 ${
-            activeTab === 'signup' ? 'border-b-2 border-blue-500' : ''
+          className={`${styles.tabButton} ${
+            activeTab === 'signup' ? styles.tabButtonActive : ''
           }`}
           onClick={() => setActiveTab('signup')}
         >

@@ -8,6 +8,7 @@ import {
   signOut,
 } from 'firebase/auth';
 import { useEffect } from 'react';
+import styles from './AuthTab.module.css'; // スタイルをインポート
 
 interface LoginFormProps {
   onLoginSuccess: () => void;
@@ -59,31 +60,31 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className={styles.loginForm}>
       <button
         onClick={handleGoogleLogin}
-        className="bg-blue-500 text-white px-4 py-2 rounded w-full"
+        className={`${styles.button} ${styles.googleButton}`}
       >
         Googleでログイン
       </button>
-      <form onSubmit={handleEmailLogin} className="space-y-2">
+      <form onSubmit={handleEmailLogin} className={styles.loginForm}>
         <input
           type="email"
           placeholder="メールアドレス"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="border rounded px-2 py-1 w-full"
+          className={styles.input}
         />
         <input
           type="password"
           placeholder="パスワード"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="border rounded px-2 py-1 w-full"
+          className={styles.input}
         />
         <button
           type="submit"
-          className="bg-green-500 text-white px-4 py-2 rounded w-full"
+          className={`${styles.button} ${styles.emailButton}`}
         >
           メールでログイン
         </button>

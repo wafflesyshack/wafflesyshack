@@ -1,0 +1,59 @@
+/* components/AuthTab.module.css */
+.container {
+  width: 100%;
+  max-width: 400px;
+  margin: 10% auto;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tabButtons {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.tabButton {
+  flex: 1;
+  padding: 10px;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+
+.tabButtonActive {
+  border-bottom-color: #3b82f6; /* 青色 */
+}
+
+.loginForm,
+.signupForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+}
+
+.googleButton {
+  background-color: #4285f4; /* Googleの青色 */
+}
+
+.emailButton {
+  background-color: #10b981; /* 緑色 */
+}
+
+.logoutButton {
+  background-color: #ef4444; /* 赤色 */
+}
