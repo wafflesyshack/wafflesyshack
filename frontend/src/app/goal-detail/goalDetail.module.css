@@ -4,7 +4,7 @@
   height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
 }
 
 .backgroundImage {
@@ -18,7 +18,38 @@
 
 .content {
   display: flex;
-  justify-content: space-around;
-  width: 80%;
+  justify-content: space-between;
+  width: 85%;
   max-width: 1200px;
+  margin-bottom: 50px;
+  position: relative;
+}
+
+.toggleButton {
+  position: absolute;
+  top: -20px;
+  background-color: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: white;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.goalCardToggleButton {
+  /* GoalCard の折りたたみボタン用クラス */
+  left: 10px;
+}
+
+.calendarToggleButton {
+  /* Calendar の折りたたみボタン用クラス */
+  right: 10px;
+}
+
+.goalCard.collapsed,
+.calendar.collapsed {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
 }
