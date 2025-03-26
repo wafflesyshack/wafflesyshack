@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS goals_table (
     user_id INTEGER NOT NULL,
     goal_name TEXT NOT NULL,
     goal_quantity INTEGER NOT NULL,
+    goal_detail TEXT NOT NULL,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     FOREIGN KEY (user_id)
