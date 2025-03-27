@@ -8,6 +8,43 @@ import sqlite3
 
 router = APIRouter()
 
+@router.post("/goal_post", response_model=Goal)
+async def add_achievement(
+    user_id:int,
+    goal_name:str = Form(...),
+    goal_quantity: int= Form(...),
+    goal_detail:str= Form(...),
+    start_date: date= Form(...),
+    end_date: date= Form(...),
+    db: sqlite3.Connection = Depends(get_db),
+):
+    if not goal_name:
+        raise HTTPException(status_code=400, detail="goal_name is required")
+    elif not goal_detail:
+        raise HTTPException(status_code=400, detail="goal_detail is required")
+    elif not start_date:
+        raise HTTPException(status_code=400, detail="strat_date is required")
+    elif not end_date:
+        raise HTTPException(status_code=400, detail="end_date is required")
+
+    cursor = db.cursor()
+
+    query = """INSERT INTO goals_table (user_id,goal_name,goal_quantity,goal_detail,start_date,end_date) VALUES (?,?,?,?,?,?)""" #?はセキュリティのため　または{table.name}...
+
+    cursor.execute(query, (user_id,goal_name,goal_quantity,goal_detail,start_date,end_date))
+    db.commit()
+
+    cursor.close()
+
+    return {
+        "user_id": user_id,
+        "goal_name": goal_name,
+        "goal_quantity": goal_quantity,
+        "goal_detail": goal_detail,
+        "start_date": start_date,
+        "end_date": end_date
+        }
+
 @router.get("/goals", response_model=Goals)
 def get_all_goals(user_id: int , db : sqlite3.Connection = Depends(get_db) ):
     cursor = db.cursor()
@@ -21,15 +58,13 @@ def get_all_goals(user_id: int , db : sqlite3.Connection = Depends(get_db) ):
     cursor.execute(query, (user_id,))
 
     rows = cursor.fetchall()
-    goals_list= [ row[2] for row in rows]
+    goals_list= [ row[0] for row in rows]
     
     result = goals_list
 
-    db.commit()
-
     cursor.close()
     
-    return result  
+    return {"goals": goals_list} 
 
 @router.get("/goals/{goal_id}", response_model=Goal)
 def get_single_item(goal_id: int , db : sqlite3.Connection = Depends(get_db) ):
@@ -43,12 +78,20 @@ def get_single_item(goal_id: int , db : sqlite3.Connection = Depends(get_db) ):
     
     cursor.execute(query, (goal_id,))
 
-    rows = cursor.fetchone()
-    goal_list = [rows]
+    row = cursor.fetchone()
+
+    if row is None:
+        raise HTTPException(status_code=404, detail="Goal not found")
+
+    goal_list = {
+        "goal_name": row[1],
+        "goal_quantity": row[2],
+        "goal_detail": row[3],
+        "start_date": row[4],
+        "end_date": row[5]
+    }
     
     result = goal_list
-
-    db.commit()
 
     cursor.close()
     

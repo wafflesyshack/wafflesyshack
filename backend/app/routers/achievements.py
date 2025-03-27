@@ -23,8 +23,6 @@ async def add_achievement(
 
     cursor = db.cursor()
 
-    category_id = cursor.lastrowid
-
     query = """INSERT INTO achievements_table (goal_id,achievement_date,achievement_quantity,achievement_detail) VALUES (?,?,?,?)""" #?はセキュリティのため　または{table.name}...
 
     cursor.execute(query, (goal_id,achievement_date,achievement_quantity,achievement_detail))
