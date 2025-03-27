@@ -13,22 +13,29 @@ class Login(BaseModel):
     email:Optional[str] = None
 
 class Goals(BaseModel):
-    goals: list
+    goals: list   # これは「goals というキーを持つ辞書」を定義している
 
 class Goal(BaseModel):
+    user_id:int
     goal_name: str
-    goal_quantity: int
+    goal_quantity: Optional[int] = None
     goal_detail: str
     start_date: date
     end_date: date
 
 class Achievement(BaseModel):
+    goal_id:int
+    achievement_detail:Optional[str] = None
     achievement_date: date
     achievement_quantity:int
     
-class Star(BaseModel):    
+class Star(BaseModel):
+    achievement_id:int    
     star_type:int
     star_position_x:int
     star_position_y:int
     star_color:str
-    star_light:str
+    star_light:int
+
+class Stars(BaseModel):
+    stars: list  

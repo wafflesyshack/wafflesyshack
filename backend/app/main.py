@@ -23,7 +23,10 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 # CORS設定
-origins = [os.environ.get("FRONT_URL", "http://localhost:3000")]
+origins = [
+    os.environ.get("FRONT_URL", "http://localhost:3000"),  # デフォルト値として"http://localhost:3000"
+    "http://127.0.0.1:8000"  # こちらは固定のURLとして追加
+]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
