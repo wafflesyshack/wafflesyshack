@@ -15,7 +15,7 @@ const StarSky: React.FC<StarSkyProps> = ({ stars }) => {
     style={{
       position: 'relative',
       height: '100vh',
-      backgroundImage: 'url("/images/SL-112421-46970-28.jpg")', // 画像のパスを修正
+      backgroundImage: 'url("/images/background.jpg")', // 画像のパスを修正
       backgroundSize: 'cover', // 画像のサイズを調整
       backgroundPosition: 'center', // 画像の位置を中央に設定
     }}
