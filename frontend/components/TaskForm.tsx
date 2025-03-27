@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Star } from '../src/types/stars';
+import { Star } from '../types/star';
 import { v4 as uuidv4 } from 'uuid';
 
 interface TaskFormProps {
@@ -11,27 +11,60 @@ interface TaskFormProps {
 const TaskForm: React.FC<TaskFormProps> = ({ onStarCreated }) => {
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
-  const [unit, setUnit] = useState('');
-  const [color, setColor] = useState('#ffffff'); // デフォルトは白
+  const [achievedAmount, setAchievedAmount] = useState('');
+  const [color, setColor] = useState('#ffffff');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newStar: Star = {
-      id: uuidv4(),
-      star_type: '通常星', // 例: 通常星
-      star_position_x: Math.random() * window.innerWidth, // ランダムなX座標
-      star_position_y: Math.random() * window.innerHeight, // ランダムなY座標
-      star_color: color,
-      star_light: Math.random() * 100, // 0から100のランダムな明るさ
-    };
+    const achievementRate = (Number(achievedAmount) / Number(amount)) * 100;
 
-    onStarCreated(newStar);
+    let starType = 0; // バックエンドの型に合わせて整数値を使用
+    let starLight = 0;
 
-    // フォームをリセット
+    if (achievementRate >= 1 && achievementRate <= 49) {
+      starType = 3; // 三等星
+      starLight = 50;
+    } else if (achievementRate >= 50 && achievementRate <= 99) {
+      starType = 2; // 二等星
+      starLight = 75;
+    } else if (achievementRate === 100) {
+      starType = 1; // 一等星
+      starLight = 100;
+    }
+
+    if (starType !== 0) {
+      try {
+        const response = await fetch(`http://localhost:8000/star_post/1`, {
+          // achievement_id は仮に 1
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            star_type: starType.toString(),
+            star_position_x: (Math.random() * window.innerWidth).toString(),
+            star_position_y: (Math.random() * window.innerHeight).toString(),
+            star_color: color,
+            star_light: starLight.toString(),
+          }),
+        });
+
+        if (response.ok) {
+          // バックエンドから星のデータが返ってきた場合、onStarCreated を呼び出す
+          const starData = await response.json();
+          onStarCreated(starData);
+        } else {
+          console.error('星の生成に失敗しました:', response.statusText);
+        }
+      } catch (error) {
+        console.error('星の生成エラー:', error);
+      }
+    }
+
     setTitle('');
     setAmount('');
-    setUnit('');
+    setAchievedAmount('');
   };
 
   return (
@@ -55,12 +88,12 @@ const TaskForm: React.FC<TaskFormProps> = ({ onStarCreated }) => {
         />
       </div>
       <div>
-        <label htmlFor="unit">目標単位</label>
+        <label htmlFor="achievedAmount">達成量</label>
         <input
-          type="text"
-          id="unit"
-          value={unit}
-          onChange={(e) => setUnit(e.target.value)}
+          type="number"
+          id="achievedAmount"
+          value={achievedAmount}
+          onChange={(e) => setAchievedAmount(e.target.value)}
         />
       </div>
       <div>
