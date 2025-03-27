@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import GoalList from "../../../components/GoalList";
-import Calendar from "../../../components/Calendar";
+import CalendarShelf from "../../../components/CalendarShelf";
 import StarSky from "../../../components/StarSky";
+import styles from './home.module.css';
 
 export default function HomePage() {
   const [goals, setGoals] = useState([]);
@@ -51,7 +52,7 @@ export default function HomePage() {
 
           {/* カレンダー（右下） */}
           <div className="w-full sm:w-1/2 lg:w-3/4 p-2">
-            <Calendar data={calendarData} /> {/* calendarDataをCalendarに渡す */}
+            <CalendarShelf data={calendarData} /> {/* calendarDataをCalendarに渡す */}
           </div>
         </div>
       </div>
