@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS stars_table (
     star_position_x INTEGER NOT NULL,
     star_position_y INTEGER NOT NULL,
     star_color TEXT NOT NULL,
-    star_light TEXT NOT NULL,
+    star_light INTEGER NOT NULL,
     FOREIGN KEY (achievement_id)
        REFERENCES achievements_table (achievement_id) 
 );

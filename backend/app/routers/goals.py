@@ -84,11 +84,11 @@ def get_single_item(goal_id: int , db : sqlite3.Connection = Depends(get_db) ):
         raise HTTPException(status_code=404, detail="Goal not found")
 
     goal_list = {
-        "goal_name": row[1],
-        "goal_quantity": row[2],
-        "goal_detail": row[3],
-        "start_date": row[4],
-        "end_date": row[5]
+        "goal_name": row[0],
+        "goal_quantity": row[1],
+        "goal_detail": row[2],
+        "start_date": row[3],
+        "end_date": row[4]
     }
     
     result = goal_list

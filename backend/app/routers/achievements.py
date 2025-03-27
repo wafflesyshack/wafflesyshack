@@ -8,7 +8,7 @@ import sqlite3
 
 router = APIRouter()
 
-@router.post("{goal_id}/achievement_post", response_model=Achievement)
+@router.post("/achievement_post/{goal_id}", response_model=Achievement)
 async def add_achievement(
     goal_id:int,
     achievement_date: date = Form(...),
@@ -31,7 +31,12 @@ async def add_achievement(
 
     cursor.close()
 
-    return (goal_id,achievement_date,achievement_quantity,achievement_detail)
+    return {
+        "goal_id": goal_id,
+        "achievement_date": achievement_date,
+        "achievement_quantity": achievement_quantity,
+        "achievement_detail": achievement_detail
+    }
 
 
 

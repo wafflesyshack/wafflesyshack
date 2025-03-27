@@ -35,4 +35,7 @@ class Star(BaseModel):
     star_position_x:int
     star_position_y:int
     star_color:str
-    star_light:str
+    star_light:int
+
+class Stars(BaseModel):
+    stars: list  
