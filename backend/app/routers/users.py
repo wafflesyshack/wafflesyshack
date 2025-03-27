@@ -1,3 +1,7 @@
+from fastapi import APIRouter
+
+router = APIRouter()
+
 #reutersの中にあるファイルはそれぞれの機能ごとに、エンドポイントの実装をするためのファイル。下のコードは例。
 
 #@router.post("/items", response_model=AddItemResponse)
