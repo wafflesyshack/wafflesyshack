@@ -1,5 +1,7 @@
 #reutersの中にあるファイルはそれぞれの機能ごとに、エンドポイントの実装をするためのファイル。下のコードは例。
+from fastapi import APIRouter
 
+router = APIRouter()
 #@router.post("/items", response_model=AddItemResponse)
 #async def add_item(name: str = Form(...), category: str = Form(...), 
 #                   image: UploadFile = File(...), db: sqlite3.Connection = Depends(get_db)):

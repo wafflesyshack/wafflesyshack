@@ -4,7 +4,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from backend.app.database import setup_database
-from routers import users, stars, goals, achievements
+from backend.app.routers.users import router as users_router
+from backend.app.routers.stars import router as stars_router
+from backend.app.routers.goals import router as goals_router
+from backend.app.routers.achievements import router as achievements_router
 
 app = FastAPI()
 
@@ -30,10 +33,10 @@ app.add_middleware(
 )
 
 # ルーターを追加
-app.include_router(users.router)
-app.include_router(stars.router)
-app.include_router(goals.router)
-app.include_router(achievements.router)
+app.include_router(users_router)
+app.include_router(stars_router)
+app.include_router(goals_router)
+app.include_router(achievements_router)
 
 logger = logging.getLogger("uvicorn")
 logger.level = logging.INFO

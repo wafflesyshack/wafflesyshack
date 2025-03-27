@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS goals_table (
     user_id INTEGER NOT NULL,
     goal_name TEXT NOT NULL,
     goal_quantity INTEGER NOT NULL,
-    goal_detail TEXT NOT NULL,
+    goal_detail TEXT,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     FOREIGN KEY (user_id)
@@ -22,7 +22,8 @@ CREATE TABLE IF NOT EXISTS achievements_table (
     achievement_id INTEGER PRIMARY KEY AUTOINCREMENT,
     goal_id INTEGER NOT NULL,
     achievement_date DATE NOT NULL,
-    achievement_quantity INTEGER NOT NULL,
+    achievement_quantity INTEGER,
+    achievement_detail TEXT NOT NULL,
     FOREIGN KEY (goal_id)
        REFERENCES goals_table (goal_id) 
 );
