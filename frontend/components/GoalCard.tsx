@@ -1,5 +1,9 @@
+'use client';
+
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation'; // useRouterをインポート
 import styles from './GoalCard.module.css';
+import StarGetModal from './StarGetModal';
 
 interface GoalData {
   goalName: string;
@@ -26,6 +30,13 @@ const GoalCard: React.FC<GoalCardProps> = ({ goalData, className, style }) => {
     name: string;
     link: string;
   } | null>(null);
+  const [isStarGetModalOpen, setIsStarGetModalOpen] = useState(false);
+  const [achievementRate, setAchievementRate] = useState(0);
+  const [starType, setStarType] = useState(0);
+  const [starLight, setStarLight] = useState('');
+  const [starColor, setStarColor] = useState('#ffffff');
+
+  const router = useRouter(); // useRouterフックを使用
 
   const openModal = (goal?: { id: number; name: string; link: string }) => {
     if (goal) {
@@ -54,8 +65,31 @@ const GoalCard: React.FC<GoalCardProps> = ({ goalData, className, style }) => {
 
   const handleSubmit = () => {
     if (selectedGoal) {
-      console.log('記録:', goalDetail, goalQuantity, goalUnit);
+      // 記録ボタンが押された場合
+      const rate = (goalQuantity / 100) * 100;
+      setAchievementRate(rate);
+
+      let type = 0;
+      let light = '';
+
+      if (rate >= 1 && rate <= 49) {
+        type = 3;
+        light = '三等星';
+      } else if (rate >= 50 && rate <= 99) {
+        type = 2;
+        light = '二等星';
+      } else if (rate === 100) {
+        type = 1;
+        light = '一等星';
+      }
+
+      setStarType(type);
+      setStarLight(light);
+
+      // 新しいページに遷移
+      router.push('/star-get');
     } else {
+      // 追加ボタンが押された場合
       setLocalGoals([
         ...localGoals,
         {
@@ -64,7 +98,12 @@ const GoalCard: React.FC<GoalCardProps> = ({ goalData, className, style }) => {
           link: `/goal-detail/${Date.now()}`,
         },
       ]);
+      closeModal();
     }
+  };
+
+  const closeStarGetModal = () => {
+    setIsStarGetModalOpen(false);
     closeModal();
   };
 

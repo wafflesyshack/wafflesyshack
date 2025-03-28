@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Star } from '../types/star';
+import { Star } from '../src/types/stars';
 import { v4 as uuidv4 } from 'uuid';
 
 interface TaskFormProps {
