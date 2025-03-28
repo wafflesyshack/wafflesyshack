@@ -4,19 +4,48 @@ import styles from './GoalCard.module.css';
 interface AddGoalModalProps {
   onAdd: (goal: { id: number; name: string; link: string }) => void;
   onCancel: () => void;
+  userId: number;
 }
 
-const AddGoalModal: React.FC<AddGoalModalProps> = ({ onAdd, onCancel }) => {
+const AddGoalModal: React.FC<AddGoalModalProps> = ({
+  onAdd,
+  onCancel,
+  userId,
+}) => {
   const [goalDetail, setGoalDetail] = useState('');
   const [goalQuantity, setGoalQuantity] = useState(0);
   const [goalUnit, setGoalUnit] = useState('ページ');
 
-  const handleSubmit = () => {
-    onAdd({
-      id: Date.now(),
-      name: `${goalDetail} (${goalQuantity} ${goalUnit})`,
-      link: `/goal-detail/${Date.now()}`,
-    });
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch('/routers/goal_post', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          user_id: userId.toString(),
+          goal_name: `${goalDetail} (${goalQuantity} ${goalUnit})`,
+          goal_quantity: goalQuantity.toString(),
+          goal_detail: goalDetail,
+          start_date: new Date().toISOString().split('T')[0],
+          end_date: new Date().toISOString().split('T')[0],
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        onAdd({
+          id: data.goal_id,
+          name: data.goal_name,
+          link: `/goal-detail/${data.goal_id}`,
+        });
+      } else {
+        console.error('Failed to add goal:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error adding goal:', error);
+    }
   };
 
   return (
