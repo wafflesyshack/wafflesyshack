@@ -12,24 +12,30 @@ interface StarSkyProps {
 const StarSky: React.FC<StarSkyProps> = ({ stars }) => {
   return (
     <div
-    style={{
-      position: 'relative',
-      height: '100vh',
-      backgroundImage: 'url("/images/background.jpg")', // 画像のパスを修正
-      backgroundSize: 'cover', // 画像のサイズを調整
-      backgroundPosition: 'center', // 画像の位置を中央に設定
-    }}
-  >
+      style={{
+        position: 'fixed', // 固定してスクロール時にずれないようにする
+        top: 0,
+        left: 0,
+        width: '100vw', // 横幅を100%に
+        height: '100vh', // 縦幅を100%に
+        backgroundImage: 'url("/images/background.jpg")', // 背景画像
+        backgroundSize: 'cover', // 画面全体をカバー
+        backgroundPosition: 'center', // 画像を中央配置
+        backgroundRepeat: 'no-repeat', // 繰り返しなし
+        backgroundAttachment: 'fixed', // スクロールしても背景を固定
+        zIndex: -1, // 背景を最背面に配置
+      }}
+    >
       <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
         {stars.map((star, index) => (
           <li
             key={index}
             style={{
               position: 'absolute',
-              left: `${star.position_x}%`, // X座標を画面幅に基づいて設定
-              top: `${star.position_y}%`, // Y座標を画面高さに基づいて設定
+              left: `${star.position_x}%`, // X座標
+              top: `${star.position_y}%`, // Y座標
               color: star.color,
-              fontSize: '24px', // 星のサイズ（必要に応じて調整）
+              fontSize: '24px', // 星のサイズ
             }}
           >
             {star.type}

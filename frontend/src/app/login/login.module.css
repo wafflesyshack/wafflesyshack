@@ -1,10 +1,46 @@
-/* app/login/page.module.css */
 .container {
-  background-image: url('../../../public/images/SL-112421-46970-28.jpg'); /* 画像のパス */
+  background-image: url('../../../public/images/background.jpg'); /* 画像のパス */
   background-size: cover;
   background-repeat: no-repeat;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative; /* 流れ星が親要素の中に配置されるようにする */
+}
+
+.star {
+  position: absolute;
+  background-color: white;
+  border-radius: 50%;
+  width: 5px;
+  height: 5px;
+  animation: twinkle 1.5s infinite, moveStar 3s linear infinite;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.8), 0 0 10px rgba(255, 255, 255, 0.6); /* 星の周りに光を追加 */
+}
+
+/* 流れ星の動き */
+@keyframes moveStar {
+  0% {
+    transform: translateY(0) translateX(0);
+  }
+  100% {
+    transform: translateY(100vh) translateX(100vw);
+  }
+}
+
+/* キラキラ効果 */
+@keyframes twinkle {
+  0% {
+    opacity: 0.5;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.8), 0 0 10px rgba(255, 255, 255, 0.6); /* 光の効果を追加 */
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 1), 0 0 20px rgba(255, 255, 255, 0.8); /* さらに強く光らせる */
+  }
+  100% {
+    opacity: 0.5;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.8), 0 0 10px rgba(255, 255, 255, 0.6); /* 元の光に戻す */
+  }
 }
