@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import styles from './goalDetail.module.css';
 import Image from 'next/image';
 import backgroundImage from '../../../public/images/background.jpg';
@@ -27,30 +27,43 @@ const goalData = {
 };
 
 const GoalDetail: React.FC = () => {
+  const params = useParams();
+  const achievementId = parseInt(params.id ? String(params.id) : '0');
   const [isGoalCardCollapsed, setIsGoalCardCollapsed] = useState(false);
   const [isCalendarCollapsed, setIsCalendarCollapsed] = useState(false);
-  const searchParams = useSearchParams();
   const [stars, setStars] = useState<
     { x: number; y: number; color: string; type: number }[]
   >([]);
 
   useEffect(() => {
-    const achievementRate = searchParams.get('achievementRate');
-    const starType = searchParams.get('starType');
-    const starColor = searchParams.get('starColor');
+    // バックエンドAPIから星のデータを取得
+    const fetchStars = async () => {
+      const response = await fetch(`/routers/stars/${achievementId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setStars(
+          data.stars.map(
+            (star: {
+              star_type: number;
+              star_position_x: number;
+              star_position_y: number;
+              star_color: string;
+              star_light: number;
+            }) => ({
+              x: star.star_position_x,
+              y: star.star_position_y,
+              color: star.star_color,
+              type: star.star_type,
+            })
+          )
+        );
+      } else {
+        console.error('Failed to fetch star data.');
+      }
+    };
 
-    if (achievementRate && starType && starColor) {
-      const newStars = [
-        {
-          x: Math.random() * window.innerWidth,
-          y: Math.random() * window.innerHeight,
-          color: starColor,
-          type: parseInt(starType),
-        },
-      ];
-      setStars(newStars);
-    }
-  }, [searchParams]);
+    fetchStars();
+  }, [achievementId]);
 
   const toggleGoalCardCollapse = () => {
     setIsGoalCardCollapsed(!isGoalCardCollapsed);
@@ -69,21 +82,30 @@ const GoalDetail: React.FC = () => {
         objectFit="cover"
         className={styles.backgroundImage}
       />
-      {stars.map((star, index) => (
-        <Image
-          key={index}
-          src="/images/star1.png" // 星の画像を表示
-          alt="Star"
-          width={50} // 画像の幅
-          height={50} // 画像の高さ
-          style={{
-            position: 'absolute',
-            left: star.x,
-            top: star.y,
-            filter: `hue-rotate(${Math.random() * 360}deg)`, // 色相をランダムに変更
-          }}
-        />
-      ))}
+      {stars.map((star, index) => {
+        let starImage = '/images/star1.png';
+        if (star.type === 2) {
+          starImage = '/images/star2.png';
+        } else if (star.type === 3) {
+          starImage = '/images/star3.png';
+        }
+
+        return (
+          <Image
+            key={index}
+            src={starImage}
+            alt="Star"
+            width={50}
+            height={50}
+            style={{
+              position: 'absolute',
+              left: star.x,
+              top: star.y,
+              filter: `hue-rotate(${Math.random() * 360}deg)`,
+            }}
+          />
+        );
+      })}
       <div className={styles.content}>
         <button
           className={`${styles.toggleButton} ${styles.goalCardToggleButton}`}

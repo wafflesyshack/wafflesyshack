@@ -4,6 +4,7 @@ from backend.app.schemas import Star,Stars
 from backend.app.database import get_db
 from datetime import date
 import sqlite3
+import random
 
 
 router = APIRouter()
@@ -18,8 +19,8 @@ async def add_star(
     star_light:int = Form(...),
     db: sqlite3.Connection = Depends(get_db),
 ):
-    if not star_type:
-        raise HTTPException(status_code=400, detail="star_type is required")
+    if not 1 <= star_type <= 3:  # star_typeが1, 2, 3のいずれかであることを確認
+        raise HTTPException(status_code=400, detail="star_type must be 1, 2, or 3")
     elif not star_position_x:
         raise HTTPException(status_code=400, detail="star_position_x is required")
     elif not star_position_y:
@@ -68,3 +69,30 @@ def get_all_stars(achievement_id: int , db : sqlite3.Connection = Depends(get_db
     cursor.close()
     
     return result  
+
+
+@router.get("/star-data/{achievement_id}")
+async def get_star_data(achievement_id: int, db: sqlite3.Connection = Depends(get_db)):
+    cursor = db.cursor()
+
+    # 達成率を計算する（ここでは仮の値を設定）
+    achievement_rate = random.randint(0, 100)
+
+    # 星の種類をランダムに決定
+    star_type = random.randint(1, 3)
+
+    # 星の明るさを達成率に基づいて決定
+    if achievement_rate == 100:
+        star_light = "一等星"
+    elif achievement_rate >= 50:
+        star_light = "二等星"
+    else:
+        star_light = "三等星"
+
+    cursor.close()
+
+    return {
+        "achievementRate": achievement_rate,
+        "starType": star_type,
+        "starLight": star_light,
+    }

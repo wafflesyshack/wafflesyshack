@@ -10,29 +10,30 @@ const StarGetPage: React.FC = () => {
   const [starColor, setStarColor] = useState('#ffffff');
 
   const getStarData = async () => {
-    return {
-      achievementRate: 80,
-      starType: 1,
-      starLight: '一等星',
-    };
+    const response = await fetch('/routers/star-data'); // エンドポイントを修正
+    const data = await response.json();
+    return data;
   };
 
   const handleRecord = async () => {
     const starData = await getStarData();
-    const achievementId = parseInt(searchParams.get('achievementId') || '0'); // achievementIdを取得
+    const achievementId = parseInt(searchParams.get('achievementId') || '0');
 
     // 星の座標をランダムに生成
     const starPositionX = Math.floor(Math.random() * window.innerWidth);
     const starPositionY = Math.floor(Math.random() * window.innerHeight);
 
+    // 星の種類をランダムに決定
+    const starType = Math.floor(Math.random() * 3) + 1;
+
     // バックエンドAPIに星のデータを送信
-    const response = await fetch(`/reuters/star_post/${achievementId}`, {
+    const response = await fetch(`/routers/stars/${achievementId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
-        star_type: String(starData.starType),
+        star_type: String(starType),
         star_position_x: String(starPositionX),
         star_position_y: String(starPositionY),
         star_color: starColor,

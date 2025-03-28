@@ -17,6 +17,11 @@ CREATE TABLE IF NOT EXISTS goals_table (
 
 );
 
+CREATE TABLE IF NOT EXISTS goals_table (
+    topic_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    topic_name TEXT NOT NULL,
+);
+
 CREATE TABLE IF NOT EXISTS achievements_table (
     achievement_id INTEGER PRIMARY KEY AUTOINCREMENT,
     goal_id INTEGER NOT NULL,

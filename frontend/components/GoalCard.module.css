@@ -1,56 +1,81 @@
 .goalCard {
   background-color: #3e4078;
-  border-radius: 20px;
   padding: 20px;
-  width: 48%;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  color: white;
-  transition: transform 0.3s ease-in-out;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 50%; /* 幅を100%に */
+  overflow-x: auto; /* 横スクロールを有効に */
+  white-space: nowrap; /* goalButton を横並びにする */
 }
 
 .goalTitle {
-  font-size: 1.5rem;
-  margin-bottom: 20px;
   display: flex;
-  justify-content: space-between;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  align-items: center;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.goalName {
+  flex-grow: 1;
+  text-align: center;
 }
 
 .addButton {
   background-color: #0070f3;
   color: white;
-  padding: 5px 10px;
   border: none;
-  border-radius: 5px;
+  padding: 8px 16px;
+  border-radius: 4px;
   cursor: pointer;
+  margin-left: auto; /* 右側の要素を右端に配置 */
 }
 
 .goalButtons {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 10px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  padding-top: 20px;
+  margin-bottom: 20px;
 }
 
 .goalButton {
-  background-color: #0070f3;
-  color: white;
-  padding: 10px 20px;
+  background-color: #f0f0f0;
   border: none;
-  border-radius: 5px;
+  padding: 15px 20px;
+  border-radius: 8px;
   cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-width: 120px; /* goalButton の最小幅を設定 */
+  position: relative; /* 星を配置するための基準 */
+}
+
+.goalButton::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 10px;
+  height: 10px;
+  background-color: #ffca28; /* 右上の角の背景色を黄色に */
+  border-radius: 2px;
+}
+
+.goalButton::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 15px 15px 0;
+  border-color: transparent #ffca28 transparent transparent; /* 右上の三角の背景色を黄色に */
 }
 
 .goalProgress {
   display: flex;
   justify-content: space-around;
-  margin-top: auto;
+  margin-bottom: 20px;
+  color: white; /* 進捗の文字色を白に */
 }
 
 .progressItem {
@@ -63,65 +88,84 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* 暗転用のオーバーレイ */
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* モーダルを最前面に表示 */
+  z-index: 1000; /* カレンダーよりも大きい値を設定 */
 }
 
 .modalContent {
   background-color: white;
   padding: 20px;
-  border-radius: 5px;
+  border-radius: 8px;
   width: 400px;
-  color: black; /* 文字色を黒に変更 */
-  z-index: 1000; /* または 9999 など、より大きな値 */
+}
+
+.closeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: solid;
+  background: none;
+  cursor: pointer;
+  color: black; /* 色を黒に設定 */
+}
+
+.closeButton:hover {
+  cursor: pointer; /* ホバー時にカーソルをポインターに変更 */
+  z-index: 1001;
+}
+
+.modal h2 {
+  margin-bottom: 15px;
+  color: black;
+  text-align: center;
+}
+
+.modal label {
+  display: block;
+  margin-bottom: 10px;
+  color: black;
+}
+
+.modal input,
+.modal select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: black;
 }
 
 .modalButtons {
   display: flex;
   justify-content: space-around;
+  margin-top: 20px;
 }
 
-.modalTabs {
-  display: flex;
-  margin-bottom: 10px;
-}
-
-.modalTabs button {
+.modalButtons button {
   padding: 10px 20px;
   border: none;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: pointer;
-  margin-right: 5px;
 }
 
-.modalTabs button.activeTab {
+.modalButtons button:first-child {
   background-color: #0070f3;
   color: white;
 }
 
-.goalCard::before {
-  content: '';
-  position: absolute;
+.modalButtons button:last-child {
+  background-color: #f0f0f0;
+}
+
+.modalOverlay {
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 10px;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), transparent);
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-}
-
-.goalCard::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 10px;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.1), transparent);
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999; /* モーダルよりも低い z-index */
 }

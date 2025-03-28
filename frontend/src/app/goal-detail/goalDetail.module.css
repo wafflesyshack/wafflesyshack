@@ -27,7 +27,7 @@
 
 .toggleButton {
   position: absolute;
-  top: -20px;
+  top: 0px;
   background-color: transparent;
   border: none;
   font-size: 1.5rem;
