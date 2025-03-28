@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import styles from './page.module.css';
+import Confetti from 'react-confetti';
+import { useWindowSize } from 'react-use'; // react-use をインストールしてください
 
 const StarGetPage: React.FC = () => {
   const router = useRouter();
@@ -11,6 +13,19 @@ const StarGetPage: React.FC = () => {
   const [starType, setStarType] = useState(1);
   const [starLight, setStarLight] = useState('一等星');
   const [achievementRate, setAchievementRate] = useState(0);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const { width, height } = useWindowSize(); // 画面サイズを取得
+
+  useEffect(() => {
+    if (achievementRate === 50) {
+      setShowConfetti(true);
+      const timer = setTimeout(() => {
+        setShowConfetti(false);
+      }, 5000); // 5秒後に停止
+
+      return () => clearTimeout(timer); // コンポーネントがアンマウントされたときにタイマーをクリア
+    }
+  }, [achievementRate]);
 
   useEffect(() => {
     // クエリパラメータから achievementRate を取得
@@ -58,6 +73,9 @@ const StarGetPage: React.FC = () => {
 
     if (response.ok) {
       // 成功した場合、goal-detailページに遷移
+      const audio = new Audio('/sounds/キラッ2.mp3'); // 音声ファイルのパスを修正
+      audio.play();
+
       router.push(`/goal-detail/${achievementId}`);
     } else {
       // エラー処理
@@ -67,12 +85,20 @@ const StarGetPage: React.FC = () => {
 
   return (
     <div className={styles.container}>
+      {showConfetti && (
+        <Confetti
+          width={width}
+          height={height}
+          recycle={false} // 紙吹雪をリサイクルしない
+          numberOfPieces={200} // 紙吹雪の数を調整
+        />
+      )}
       <div className={styles.card}>
         <h1 className={styles.title}>星GET!!!</h1>
-        <p>達成度: {achievementRate}%</p>
+        <p className={styles.info}>達成度: {achievementRate}%</p>
         <p className={styles.info}>星の種類 : {starType}</p>
         <p className={styles.info}>明るさ : {starLight}</p>
-        <label>
+        <label className={styles.label}>
           色 :
           <input
             type="color"
@@ -80,7 +106,9 @@ const StarGetPage: React.FC = () => {
             onChange={(e) => setStarColor(e.target.value)}
           />
         </label>
-        <button onClick={handleRecord}>記録</button>
+        <button onClick={handleRecord} className={styles.button}>
+          入手
+        </button>
       </div>
     </div>
   );
