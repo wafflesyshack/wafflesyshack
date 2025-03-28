@@ -14,21 +14,7 @@
   color: white;
   margin-bottom: 20px; /* h1 タグの下にスペースを追加 */
   font-family: 'Bokurano'; /* 追加 */
-  font-size: xx-large;
-}
-
-@font-face {
-  font-family: 'MaruKokiaS';
-  src: url('/fonts/marukokias.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Bokurano';
-  src: url('../../../public/fonts/Bokurano.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+  font-size: 50;
 }
 
 .star {

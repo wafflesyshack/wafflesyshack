@@ -2,6 +2,12 @@
 import { useEffect } from 'react';
 import AuthTabs from '../../../components/AuthTab';
 import styles from './login.module.css'; // スタイルをインポート
+import { Kaisei_Opti } from 'next/font/google';
+
+const kaiseiOpti = Kaisei_Opti({
+  weight: ['400', '700'],
+  subsets: ['latin'],
+});
 
 const AuthPage = () => {
   useEffect(() => {
@@ -43,7 +49,7 @@ const AuthPage = () => {
           alignItems: 'center',
         }}
       >
-        <h1 className={styles.h1}>Star Sky</h1>
+        <h1 className={`${styles.h1} ${kaiseiOpti.className}`}>夜空の記録</h1>
         <div style={{ width: '400px', height: '400px' }}>
           {' '}
           {/* 幅と高さを指定 */}
