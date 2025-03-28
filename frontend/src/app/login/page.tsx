@@ -36,8 +36,20 @@ const AuthPage = () => {
 
   return (
     <div className={styles.container}>
-      {/* スタイルを適用 */}
-      <AuthTabs />
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <h1 className={styles.h1}>Star Sky</h1>
+        <div style={{ width: '400px', height: '400px' }}>
+          {' '}
+          {/* 幅と高さを指定 */}
+          <AuthTabs />
+        </div>
+      </div>
     </div>
   );
 };
