@@ -16,7 +16,21 @@ export default function SignupForm({ onSignupSuccess }: SignupFormProps) {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      const response = await fetch('http://localhost:8000/register_user/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          uid: user.uid,
+          email: user.email,
+          provider: 'email',
+        }),
+      });
+      const data = await response.json();
+      localStorage.setItem('access_token', data.access_token); // トークンを保存
       onSignupSuccess();
     } catch (error) {
       console.error('新規登録エラー:', error);

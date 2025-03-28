@@ -2,10 +2,10 @@ from pydantic import BaseModel
 from datetime import date
 from typing import Optional
 
-class Register(BaseModel):
-    username:str
-    password:str
-    email:str
+class User(BaseModel):
+    uid: str
+    email: str
+    provider: str
 
 class Login(BaseModel):
     username:str
