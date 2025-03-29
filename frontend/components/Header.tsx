@@ -6,6 +6,12 @@ import { auth } from '../libs/firebase';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import styles from './AuthTab.module.css'; // スタイルをインポート
+import { Kaisei_Opti } from 'next/font/google';
+
+const kaiseiOpti = Kaisei_Opti({
+    weight: ['400', '700'],
+    subsets: ['latin'],
+});
 
 const Header = () => {
   const [user] = useAuthState(auth);
@@ -17,21 +23,38 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-gray-100 py-4">
+    <header 
+      style={{ backgroundColor: 'rgba(17, 17, 68)' }} 
+      className="py-4 shadow-lg "
+    >
       <nav className="container mx-auto flex justify-between items-center">
-        <Link href="/">
-          <span className="text-xl font-bold">アプリ名</span>
+        {/* 🏠 ホームページフォルダに移動するボタン */}
+        <Link href="/homepage" passHref>
+          <button className={`${styles.homeButton} ${kaiseiOpti.className}`}>
+            <img
+              src="/images/homebutton.png" 
+              alt="ホーム"
+              className="w-12 h-12" // 画像のサイズ調整
+            />
+          </button>
         </Link>
+        
+        <Link href="/">
+         <span className={`text-white ${kaiseiOpti.className} text-xl font-bold`}>
+           夜空の記録
+         </span>
+        </Link>
+        
         {user ? (
           <button
             onClick={handleLogout}
-            className={`${styles.button} ${styles.logoutButton}`}
+            className={`${styles.button} ${kaiseiOpti.className} ${styles.logoutButton}`}
           >
             ログアウト
           </button>
         ) : (
           <Link href="/login">
-            <span className={`${styles.button} ${styles.emailButton}`}>
+            <span className={`${styles.button} ${kaiseiOpti.className} ${styles.loginButton}`}>
               ログイン
             </span>
           </Link>
