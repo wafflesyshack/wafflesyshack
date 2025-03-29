@@ -70,3 +70,29 @@ async def get_topics(uid: str, db: sqlite3.Connection = Depends(get_db)):
         })
 
     return result
+
+@router.get("/topics/{topicId}", response_model=TopicCreate)
+async def get_topic(topicId: int, db: sqlite3.Connection = Depends(get_db)):
+    cursor = db.cursor()
+
+    query = """SELECT * FROM topics_table WHERE topic_id = ?"""
+
+    cursor.execute(query, (topicId,))
+
+    topic = cursor.fetchone()
+
+    cursor.close()
+
+    if not topic:
+        raise HTTPException(status_code=404, detail="Topic not found")
+
+    # sqlite3.Row オブジェクトを辞書に変換
+    result = {
+        "topic_id": topic["topic_id"],
+        "uid": topic["uid"],
+        "topic_name": topic["topic_name"],
+        "start_date": topic["start_date"],
+        "end_date": topic["end_date"],
+    }
+
+    return result

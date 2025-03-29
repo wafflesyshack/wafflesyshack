@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation'; // useRouterをインポート
+import { useRouter } from 'next/navigation';
 import styles from './GoalCard.module.css';
 import AddGoalModal from './AddGoalModal';
 import RecordGoalModal from './RecordGoalModal';
@@ -14,12 +14,24 @@ interface GoalData {
 }
 
 interface GoalCardProps {
-  goalData: GoalData;
+  goalName: string;
+  goals: { id: number; name: string; link: string }[];
+  continuousDays: number;
+  totalDays: number;
   className?: string;
   style?: React.CSSProperties;
+  goalData: GoalData; // goalData を prop として追加
 }
 
-const GoalCard: React.FC<GoalCardProps> = ({ goalData, className, style }) => {
+const GoalCard: React.FC<GoalCardProps> = ({
+  goalName,
+  goals,
+  continuousDays,
+  totalDays,
+  className,
+  style,
+  goalData, // goalData を prop として受け取る
+}) => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
   const [localGoals, setLocalGoals] = useState(goalData.goals);
@@ -49,7 +61,6 @@ const GoalCard: React.FC<GoalCardProps> = ({ goalData, className, style }) => {
     closeAddModal();
   };
 
-  // 記録ボタンが押された時の処理（goalButton の記録ボタンのみ）
   const handleRecordGoal = (rate: number) => {
     console.log(`達成率: ${rate}%`);
     router.push('/star-get');
@@ -59,7 +70,7 @@ const GoalCard: React.FC<GoalCardProps> = ({ goalData, className, style }) => {
   return (
     <div className={`${styles.goalCard} ${className}`} style={style}>
       <div className={styles.goalTitle}>
-        <div className={styles.goalName}>{goalData.goalName}</div>
+        <div className={styles.goalName}>{goalName}</div>
         <button className={styles.addButton} onClick={openAddModal}>
           +
         </button>
@@ -91,15 +102,13 @@ const GoalCard: React.FC<GoalCardProps> = ({ goalData, className, style }) => {
 
       {isAddModalOpen && (
         <>
-          <div className={styles.modalOverlay} />{' '}
-          {/* カレンダーを暗くする背景 */}
+          <div className={styles.modalOverlay} />
           <AddGoalModal onAdd={handleAddGoal} onCancel={closeAddModal} />
         </>
       )}
       {isRecordModalOpen && selectedGoal && (
         <>
-          <div className={styles.modalOverlay} />{' '}
-          {/* カレンダーを暗くする背景 */}
+          <div className={styles.modalOverlay} />
           <RecordGoalModal
             goal={selectedGoal}
             onRecord={handleRecordGoal}
