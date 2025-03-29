@@ -24,11 +24,16 @@ CREATE TABLE IF NOT EXISTS tokens (
 
 CREATE TABLE IF NOT EXISTS topics_table ( 
     topic_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    topic_name TEXT NOT NULL );
+    uid TEXT NOT NULL, -- ユーザーIDを追加
+    topic_name TEXT NOT NULL,
+    start_date DATE NOT NULL, 
+    end_date DATE NOT NULL
+
+);
 
 CREATE TABLE IF NOT EXISTS goals_table (
     goal_id INTEGER PRIMARY KEY AUTOINCREMENT, 
-    uid TEXT NOT NULL,  -- user_id を uid に変更
+    uid TEXT NOT NULL,
     goal_name TEXT NOT NULL, 
     topic_id INTEGER NOT NULL,
     goal_quantity INTEGER,
@@ -37,7 +42,7 @@ CREATE TABLE IF NOT EXISTS goals_table (
     end_date DATE NOT NULL, 
     FOREIGN KEY (topic_id) 
         REFERENCES topics_table (topic_id) 
-    );
+);
 
 CREATE TABLE IF NOT EXISTS achievements_table (
     achievement_id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -4,26 +4,23 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import GoalInput from './GoalInput';
 import SubmitButton from './SubmitButton';
+import { auth } from '../libs/firebase';
 
-// 目標のインターフェース
 interface GoalForm {
-  goal_name: string;
-  goal_quantity: string;
+  topic_name: string;
   start_date: string;
   end_date: string;
 }
 
 export default function AddGoal() {
   const [goal, setGoal] = useState<GoalForm>({
-    goal_name: '',
-    goal_quantity: '',
+    topic_name: '',
     start_date: '',
     end_date: '',
   });
-  const [error, setError] = useState<string>(''); // エラーメッセージ用
+  const [error, setError] = useState<string>('');
   const router = useRouter();
 
-  // 目標入力フォームの変更処理
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setGoal((prevState) => ({
@@ -32,29 +29,47 @@ export default function AddGoal() {
     }));
   };
 
-  // 目標追加ボタンのクリックイベント
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 入力内容のバリデーション（任意）
-    if (!goal.goal_name || !goal.goal_quantity || !goal.start_date) {
+    if (!goal.topic_name || !goal.start_date) {
       setError('すべてのフィールドを入力してください');
       return;
     }
 
     try {
-      // APIリクエストを送信して目標を追加
-      const response = await fetch('/api/goals', {
+      const user = auth.currentUser;
+      if (!user) {
+        setError('ログインしてください');
+        return;
+      }
+      const uid = user.uid;
+
+      // topicを保存
+      const topicResponse = await fetch('/api/topics', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(goal),
+        body: JSON.stringify({ topic_name: goal.topic_name, uid: uid }),
       });
 
-      if (response.ok) {
-        // 目標追加成功時にホーム画面へ遷移
-        router.push('/'); // ホーム画面に遷移
+      if (!topicResponse.ok) {
+        setError('Topicの追加に失敗しました');
+        return;
+      }
+
+      // goalを保存
+      const goalResponse = await fetch('/api/goals', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ...goal, uid: uid }),
+      });
+
+      if (goalResponse.ok) {
+        router.push('/');
       } else {
         setError('目標の追加に失敗しました');
       }
@@ -66,18 +81,17 @@ export default function AddGoal() {
   return (
     <div className="bg-[#3E4078]/80 p-8 rounded-lg shadow-lg w-130">
       <h2 className="text-2xl font-bold text-center mb-4 text-white">
-        目標作成
+        目標topic作成
       </h2>
 
-      {/* エラーメッセージ */}
       {error && <div className="text-red-500 mb-4">{error}</div>}
 
       <form onSubmit={handleSubmit}>
         <GoalInput
-          label="目標名"
+          label="目標topic"
           type="text"
           name="topic_name"
-          value={goal.goal_name}
+          value={goal.topic_name}
           onChange={handleChange}
           placeholder="例: スペイン語 外国語など"
         />

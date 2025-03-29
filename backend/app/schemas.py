@@ -12,6 +12,12 @@ class Login(BaseModel):
     password:str
     email:Optional[str] = None
 
+class TopicCreate(BaseModel):
+    uid: str
+    topic_name: str
+    start_date: date
+    end_date: date
+
 class Goals(BaseModel):
     goals: list   # これは「goals というキーを持つ辞書」を定義している
 

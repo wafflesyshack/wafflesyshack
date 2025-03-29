@@ -1,14 +1,15 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import styles from "./GoalList.module.css";
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import styles from './GoalList.module.css';
 import { Kaisei_Opti } from 'next/font/google';
+import { auth } from '../libs/firebase';
 
 const kaiseiOpti = Kaisei_Opti({
-    weight: ['400', '700'],
-    subsets: ['latin'],
-  });
+  weight: ['400', '700'],
+  subsets: ['latin'],
+});
 
 interface Goal {
   goal_id: number;
@@ -17,6 +18,7 @@ interface Goal {
   goal_quantity: string;
   start_date: string;
   end_date?: string;
+  topic_name: string; // topic_nameを追加
 }
 
 export default function GoalList() {
@@ -26,15 +28,22 @@ export default function GoalList() {
   useEffect(() => {
     const fetchGoals = async () => {
       try {
-        const response = await fetch("/api/goals");
+        const user = auth.currentUser;
+        if (!user) {
+          console.error('ログインしてください');
+          return;
+        }
+        const uid = user.uid;
+
+        const response = await fetch(`/api/goals?uid=${uid}`);
         if (response.ok) {
           const data: Goal[] = await response.json();
           setGoals(data);
         } else {
-          console.error("目標の取得に失敗しました");
+          console.error('目標の取得に失敗しました');
         }
       } catch (error) {
-        console.error("目標の取得中にエラーが発生しました:", error);
+        console.error('目標の取得中にエラーが発生しました:', error);
       }
     };
 
@@ -43,14 +52,13 @@ export default function GoalList() {
 
   return (
     <div className={styles.goalListContainer}>
-      {/* 目標リスト */}
       <div className={styles.header}>
         <h2 className={`${styles.title} ${kaiseiOpti.className}`}>目標</h2>
       </div>
       <div className={styles.addButtonContainer}>
         <button
           className={styles.addButton}
-          onClick={() => router.push("/goal-set")}
+          onClick={() => router.push('/goal-set')}
         >
           ＋
         </button>
@@ -62,7 +70,7 @@ export default function GoalList() {
             className={styles.goalItem}
             onClick={() => router.push(`/goal/${goal.goal_id}`)}
           >
-            {goal.goal_name}
+            {goal.goal_name} ({goal.topic_name})
           </div>
         ))}
       </div>
