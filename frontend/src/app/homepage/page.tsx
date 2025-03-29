@@ -1,84 +1,64 @@
 'use client';
-
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import Image from 'next/image';
+import styles from './home.module.css';
 import GoalList from '../../../components/GoalList';
 import CalendarShelf from '../../../components/CalendarShelf';
-import StarSky from '../../../components/StarSky';
-import styles from './home.module.css';
-
-export default function HomePage() {
-  const [goals, setGoals] = useState([]);
-  const [calendarData, setCalendarData] = useState([]);
-  const [stars, setStars] = useState([]);
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      const [goalsRes, calendarRes, starsRes] = await Promise.all([
-        fetch('/api/goals'),
-        fetch('/api/calendar'),
-        fetch('/api/stars'),
-      ]);
-
-      const [goalsData, calendarData, starsData] = await Promise.all([
-        goalsRes.json(),
-        calendarRes.json(),
-        starsRes.json(),
-      ]);
-
-      setGoals(goalsData);
-      setCalendarData(calendarData);
-      setStars(starsData);
-    } catch (error) {
-      console.error('データ取得エラー:', error);
-    }
+import Tutorial from '../../../components/Tutorial'; // Tutorial コンポーネントのインポート
+import Comment from '../../../components/Comment'; // Comment コンポーネントのインポート
+const Home: React.FC = () => {
+  const [isGoalListCollapsed, setIsGoalListCollapsed] = useState(false);
+  const [isCalendarCollapsed, setIsCalendarCollapsed] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(true); // チュートリアルを表示するための状態
+  const handleCloseTutorial = () => {
+    setShowTutorial(false); // チュートリアルを閉じる
   };
-
-  // 例: ユーザー情報取得
-  const fetchUserInfo = async (accessToken: string) => {
-    try {
-      const response = await fetch('http://localhost:8000/users/me/', {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      const data = await response.json();
-      console.log(data); // uid, email, providerを表示
-    } catch (error) {
-      console.error('ユーザー情報取得エラー:', error);
-    }
-  };
-
-  // 例: アクセストークンを取得してユーザー情報を取得
-  const accessToken = localStorage.getItem('access_token');
-  if (accessToken) {
-    fetchUserInfo(accessToken);
-  }
-
   return (
-    <div className="relative h-screen">
-      {/* 星空背景 */}
-      <StarSky stars={stars} />
-
-      {/* コンテンツ部分（目標リストとカレンダー） */}
-      <div className="absolute bottom-0 left-0 w-full p-2 z-10">
-        <div className="flex justify-between gap-6">
-          {/* 目標リスト（左下） */}
-          <div className="w-full sm:w-1/2 lg:w-3/4 p-2">
-            <GoalList goals={goals} /> {/* goalsをGoalListに渡す */}
-          </div>
-
-          {/* カレンダー（右下） */}
-          <div className="w-full sm:w-1/2 lg:w-3/4 p-2">
-            <CalendarShelf data={calendarData} />{' '}
-            {/* calendarDataをCalendarに渡す */}
-          </div>
+    <main className={styles.main}>
+      {/* 背景画像 */}
+      <Image
+        src="/images/background.jpg"
+        alt="Background Image"
+        fill
+        className={styles.backgroundImage}
+      />
+      <div className={styles.content}>
+        {/* GoalList */}
+        <button
+          className={${styles.toggleButton} ${styles.goalListToggleButton}}
+          onClick={() => setIsGoalListCollapsed(!isGoalListCollapsed)}
+        >
+          {isGoalListCollapsed ? '▲' : '▼'}
+        </button>
+        <div
+          className={`${styles.goalList} ${
+            isGoalListCollapsed ? styles.collapsed : ''
+          }`}
+        >
+          <GoalList />
+        </div>
+        {/* CalendarShelf */}
+        <button
+          className={${styles.toggleButton} ${styles.calendarToggleButton}}
+          onClick={() => setIsCalendarCollapsed(!isCalendarCollapsed)}
+        >
+          {isCalendarCollapsed ? '▲' : '▼'}
+        </button>
+        <div
+          className={`${styles.calendar} ${
+            isCalendarCollapsed ? styles.collapsed : ''
+          }`}
+        >
+          <CalendarShelf />
         </div>
       </div>
-    </div>
+      {/* チュートリアルポップアップ */}
+      {showTutorial && (
+        <Tutorial onClose={handleCloseTutorial} />
+      )}
+      {/* 目標設定吹き出し */}
+      <Comment />
+    </main>
   );
-}
+};
+export default Home;
