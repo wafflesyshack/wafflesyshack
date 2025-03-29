@@ -6,20 +6,42 @@ CREATE TABLE IF NOT EXISTS users_table (
     registration_date DATE DEFAULT (DATE('now'))
 );
 
-CREATE TABLE IF NOT EXISTS goals_table (
-    goal_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    goal_name TEXT NOT NULL,
-    goal_quantity INTEGER,
-    goal_detail TEXT,
-    start_date DATE NOT NULL,
-    end_date DATE NOT NULL
 
+
+CREATE TABLE IF NOT EXISTS users ( 
+    id INTEGER PRIMARY KEY AUTOINCREMENT, -- id を user_id に変更
+    uid TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE, 
+    provider TEXT NOT NULL
+    );
+
+CREATE TABLE IF NOT EXISTS tokens (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    uid TEXT UNIQUE,
+    token TEXT,
+    expires_at DATETIME
+    );
+
+CREATE TABLE IF NOT EXISTS topics_table ( 
+    topic_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    uid TEXT NOT NULL, -- ユーザーIDを追加
+    topic_name TEXT NOT NULL,
+    start_date DATE NOT NULL, 
+    end_date DATE NOT NULL,
+    FOREIGN KEY (uid) REFERENCES users (uid) -- 外部キー制約を追加
 );
 
 CREATE TABLE IF NOT EXISTS goals_table (
-    topic_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    topic_name TEXT NOT NULL,
+    goal_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+    uid TEXT NOT NULL,
+    goal_name TEXT NOT NULL, 
+    topic_id INTEGER NOT NULL,
+    goal_quantity INTEGER,
+    goal_detail TEXT, 
+    start_date DATE NOT NULL, 
+    end_date DATE NOT NULL, 
+    FOREIGN KEY (topic_id) 
+        REFERENCES topics_table (topic_id) 
 );
 
 CREATE TABLE IF NOT EXISTS achievements_table (

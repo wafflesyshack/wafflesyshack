@@ -10,7 +10,7 @@ router = APIRouter()
 
 @router.post("/goal_post", response_model=Goal)
 async def add_achievement(
-    user_id:int,
+    uid: str,
     goal_name:str = Form(...),
     goal_quantity: int= Form(...),
     goal_detail:str= Form(...),
@@ -31,13 +31,13 @@ async def add_achievement(
 
     query = """INSERT INTO goals_table (user_id,goal_name,goal_quantity,goal_detail,start_date,end_date) VALUES (?,?,?,?,?,?)""" #?はセキュリティのため　または{table.name}...
 
-    cursor.execute(query, (user_id,goal_name,goal_quantity,goal_detail,start_date,end_date))
+    cursor.execute(query, (uid,goal_name,goal_quantity,goal_detail,start_date,end_date))
     db.commit()
 
     cursor.close()
 
     return {
-        "user_id": user_id,
+        "uid": uid,
         "goal_name": goal_name,
         "goal_quantity": goal_quantity,
         "goal_detail": goal_detail,
@@ -46,7 +46,7 @@ async def add_achievement(
         }
 
 @router.get("/goals", response_model=Goals)
-def get_all_goals(user_id: int , db : sqlite3.Connection = Depends(get_db) ):
+def get_all_goals(uid: str , db : sqlite3.Connection = Depends(get_db) ):
     cursor = db.cursor()
     
     query = """
@@ -55,7 +55,7 @@ def get_all_goals(user_id: int , db : sqlite3.Connection = Depends(get_db) ):
             WHERE goals_table.user_id = ?
             """
     
-    cursor.execute(query, (user_id,))
+    cursor.execute(query, (uid,))
 
     rows = cursor.fetchall()
     goals_list= [ row[0] for row in rows]
