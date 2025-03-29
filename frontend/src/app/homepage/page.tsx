@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import GoalList from "../../../components/GoalList";
-import CalendarShelf from "../../../components/CalendarShelf";
-import StarSky from "../../../components/StarSky";
+import { useEffect, useState } from 'react';
+import GoalList from '../../../components/GoalList';
+import CalendarShelf from '../../../components/CalendarShelf';
+import StarSky from '../../../components/StarSky';
 import styles from './home.module.css';
 
 export default function HomePage() {
@@ -18,9 +18,9 @@ export default function HomePage() {
   const fetchData = async () => {
     try {
       const [goalsRes, calendarRes, starsRes] = await Promise.all([
-        fetch("/api/goals"),
-        fetch("/api/calendar"),
-        fetch("/api/stars"),
+        fetch('/api/goals'),
+        fetch('/api/calendar'),
+        fetch('/api/stars'),
       ]);
 
       const [goalsData, calendarData, starsData] = await Promise.all([
@@ -33,9 +33,31 @@ export default function HomePage() {
       setCalendarData(calendarData);
       setStars(starsData);
     } catch (error) {
-      console.error("データ取得エラー:", error);
+      console.error('データ取得エラー:', error);
     }
   };
+
+  // 例: ユーザー情報取得
+  const fetchUserInfo = async (accessToken: string) => {
+    try {
+      const response = await fetch('http://localhost:8000/users/me/', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const data = await response.json();
+      console.log(data); // uid, email, providerを表示
+    } catch (error) {
+      console.error('ユーザー情報取得エラー:', error);
+    }
+  };
+
+  // 例: アクセストークンを取得してユーザー情報を取得
+  const accessToken = localStorage.getItem('access_token');
+  if (accessToken) {
+    fetchUserInfo(accessToken);
+  }
 
   return (
     <div className="relative h-screen">
@@ -52,7 +74,8 @@ export default function HomePage() {
 
           {/* カレンダー（右下） */}
           <div className="w-full sm:w-1/2 lg:w-3/4 p-2">
-            <CalendarShelf data={calendarData} /> {/* calendarDataをCalendarに渡す */}
+            <CalendarShelf data={calendarData} />{' '}
+            {/* calendarDataをCalendarに渡す */}
           </div>
         </div>
       </div>

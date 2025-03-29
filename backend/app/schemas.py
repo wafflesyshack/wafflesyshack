@@ -2,10 +2,10 @@ from pydantic import BaseModel
 from datetime import date
 from typing import Optional
 
-class Register(BaseModel):
-    username:str
-    password:str
-    email:str
+class User(BaseModel):
+    uid: str
+    email: str
+    provider: str
 
 class Login(BaseModel):
     username:str
@@ -16,7 +16,8 @@ class Goals(BaseModel):
     goals: list   # これは「goals というキーを持つ辞書」を定義している
 
 class Goal(BaseModel):
-    user_id:int
+    uid: str  # user_id を uid に変更
+    goal_id:int
     goal_name: str
     goal_quantity: Optional[int] = None
     goal_detail: str
