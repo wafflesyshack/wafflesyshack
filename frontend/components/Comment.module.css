@@ -1,6 +1,6 @@
 .bubble {
   position: absolute;
-  left: 350px;  /* 右に少し移動 */
+  right: 50%;  /* 右に少し移動 */
   top: 37%;  /* 画面の縦方向の中央よりさらに少し上 */
   transform: translateY(-50%);  /* 縦方向の中央揃え */
   background: #a2d9ff;

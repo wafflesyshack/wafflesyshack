@@ -16,7 +16,7 @@ const Comment: React.FC = () => {
     // ページロード後に少し遅れて吹き出しを表示
     setTimeout(() => {
       setShowBubble(true);
-    }, 2000); // 2秒後に表示
+    }, 4000); // 4秒後に表示
   }, []);
 
   return (
