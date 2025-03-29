@@ -6,14 +6,14 @@ import GoalInput from './GoalInput';
 import SubmitButton from './SubmitButton';
 import { auth } from '../libs/firebase';
 
-interface GoalForm {
+interface TopicForm {
   topic_name: string;
   start_date: string;
   end_date: string;
 }
 
 export default function AddGoal() {
-  const [goal, setGoal] = useState<GoalForm>({
+  const [goal, setTopic] = useState<TopicForm>({
     topic_name: '',
     start_date: '',
     end_date: '',
@@ -23,7 +23,7 @@ export default function AddGoal() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setGoal((prevState) => ({
+    setTopic((prevState) => ({
       ...prevState,
       [name]: value,
     }));
@@ -46,12 +46,17 @@ export default function AddGoal() {
       const uid = user.uid;
 
       // topicを保存
-      const topicResponse = await fetch('/api/topics', {
+      const topicResponse = await fetch('http://localhost:8000/topics/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ topic_name: goal.topic_name, uid: uid }),
+        body: JSON.stringify({
+          topic_name: goal.topic_name,
+          uid: uid,
+          start_date: goal.start_date,
+          end_date: goal.end_date,
+        }),
       });
 
       if (!topicResponse.ok) {
@@ -59,20 +64,14 @@ export default function AddGoal() {
         return;
       }
 
-      // goalを保存
-      const goalResponse = await fetch('/api/goals', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ...goal, uid: uid }),
-      });
+      // topicの情報を取得
+      const topicData = await topicResponse.json();
 
-      if (goalResponse.ok) {
-        router.push('/');
-      } else {
-        setError('目標の追加に失敗しました');
-      }
+      // users/[uid] 画面に遷移し、topicの情報を渡す
+      router.push(
+        `/users/${uid}?topicName=${topicData.topic_name}&startDate=${topicData.start_date}&endDate=${topicData.end_date}`
+      );
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       setError('ネットワークエラーが発生しました');
     }

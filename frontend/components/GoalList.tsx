@@ -11,49 +11,61 @@ const kaiseiOpti = Kaisei_Opti({
   subsets: ['latin'],
 });
 
-interface Goal {
-  goal_id: number;
-  username: string;
-  goal_name: string;
-  goal_quantity: string;
+interface Topic {
+  topic_id: number;
+  uid: string;
+  topic_name: string;
   start_date: string;
   end_date?: string;
-  topic_name: string; // topic_nameを追加
 }
 
-export default function GoalList() {
-  const [goals, setGoals] = useState<Goal[]>([]);
+interface GoalListProps {
+  topicName?: string;
+  startDate?: string;
+  endDate?: string;
+}
+
+export default function GoalList({
+  topicName,
+  startDate,
+  endDate,
+}: GoalListProps) {
+  const [topics, setTopics] = useState<Topic[]>([]);
   const router = useRouter();
 
   useEffect(() => {
-    const fetchGoals = async () => {
-      try {
-        const user = auth.currentUser;
-        if (!user) {
-          console.error('ログインしてください');
-          return;
-        }
-        const uid = user.uid;
-
-        const response = await fetch(`/api/goals?uid=${uid}`);
-        if (response.ok) {
-          const data: Goal[] = await response.json();
-          setGoals(data);
-        } else {
-          console.error('目標の取得に失敗しました');
-        }
-      } catch (error) {
-        console.error('目標の取得中にエラーが発生しました:', error);
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        fetchTopics(user.uid);
+      } else {
+        console.error('ログインしてください');
       }
-    };
+    });
 
-    fetchGoals();
+    return () => unsubscribe();
   }, []);
+
+  const fetchTopics = async (uid: string) => {
+    try {
+      // GET リクエストを送信
+      const response = await fetch(`http://localhost:8000/topics/?uid=${uid}`);
+      if (response.ok) {
+        const data: Topic[] = await response.json();
+        setTopics(data);
+      } else {
+        console.error('目標トピックの取得に失敗しました');
+      }
+    } catch (error) {
+      console.error('目標トピックの取得中にエラーが発生しました:', error);
+    }
+  };
 
   return (
     <div className={styles.goalListContainer}>
       <div className={styles.header}>
-        <h2 className={`${styles.title} ${kaiseiOpti.className}`}>目標</h2>
+        <h2 className={`${styles.title} ${kaiseiOpti.className}`}>
+          目標トピック
+        </h2>
       </div>
       <div className={styles.addButtonContainer}>
         <button
@@ -64,13 +76,16 @@ export default function GoalList() {
         </button>
       </div>
       <div className={styles.goalItems}>
-        {goals.map((goal) => (
+        {topics.map((topic) => (
           <div
-            key={goal.goal_id}
+            key={topic.topic_id}
             className={styles.goalItem}
-            onClick={() => router.push(`/goal/${goal.goal_id}`)}
+            onClick={() => router.push(`/goal/${topic.topic_id}`)}
           >
-            {goal.goal_name} ({goal.topic_name})
+            {topic.topic_name}
+            {topicName && <p>追加されたトピック: {topicName}</p>}
+            {startDate && <p>開始日: {startDate}</p>}
+            {endDate && <p>終了日: {endDate}</p>}
           </div>
         ))}
       </div>

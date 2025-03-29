@@ -13,6 +13,7 @@ class Login(BaseModel):
     email:Optional[str] = None
 
 class TopicCreate(BaseModel):
+    topic_id: Optional[int] = None  # topic_id を追加
     uid: str
     topic_name: str
     start_date: date

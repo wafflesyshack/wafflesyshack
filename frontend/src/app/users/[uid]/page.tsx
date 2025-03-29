@@ -1,25 +1,29 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import styles from './home.module.css';
 import GoalList from '../../../../components/GoalList';
 import CalendarShelf from '../../../../components/CalendarShelf';
-import Tutorial from '../../../../components/Tutorial'; // Tutorial コンポーネントのインポート
-import Comment from '../../../../components/Comment'; // Comment コンポーネントのインポート
+import Tutorial from '../../../../components/Tutorial';
+import Comment from '../../../../components/Comment';
+import { useSearchParams } from 'next/navigation';
 
 const Home: React.FC = () => {
   const [isGoalListCollapsed, setIsGoalListCollapsed] = useState(false);
   const [isCalendarCollapsed, setIsCalendarCollapsed] = useState(false);
-  const [showTutorial, setShowTutorial] = useState(true); // チュートリアルを表示するための状態
+  const [showTutorial, setShowTutorial] = useState(true);
+  const searchParams = useSearchParams();
+  const topicName = searchParams.get('topicName') as string | undefined; // string | undefined 型にキャスト
+  const startDate = searchParams.get('startDate') as string | undefined; // string | undefined 型にキャスト
+  const endDate = searchParams.get('endDate') as string | undefined; // string | undefined 型にキャスト
 
   const handleCloseTutorial = () => {
-    setShowTutorial(false); // チュートリアルを閉じる
+    setShowTutorial(false);
   };
 
   return (
     <main className={styles.main}>
-      {/* 背景画像 */}
       <Image
         src="/images/background.jpg"
         alt="Background Image"
@@ -28,7 +32,6 @@ const Home: React.FC = () => {
       />
 
       <div className={styles.content}>
-        {/* GoalList */}
         <button
           className={`${styles.toggleButton} ${styles.goalListToggleButton}`}
           onClick={() => setIsGoalListCollapsed(!isGoalListCollapsed)}
@@ -40,10 +43,13 @@ const Home: React.FC = () => {
             isGoalListCollapsed ? styles.collapsed : ''
           }`}
         >
-          <GoalList />
+          <GoalList
+            topicName={topicName}
+            startDate={startDate}
+            endDate={endDate}
+          />
         </div>
 
-        {/* CalendarShelf */}
         <button
           className={`${styles.toggleButton} ${styles.calendarToggleButton}`}
           onClick={() => setIsCalendarCollapsed(!isCalendarCollapsed)}
@@ -59,10 +65,8 @@ const Home: React.FC = () => {
         </div>
       </div>
 
-      {/* チュートリアルポップアップ */}
       {showTutorial && <Tutorial onClose={handleCloseTutorial} />}
 
-      {/* 目標設定吹き出し */}
       <Comment />
     </main>
   );

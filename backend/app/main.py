@@ -3,6 +3,8 @@ import logging
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
+
+import uvicorn
 from backend.app.database import setup_database
 from backend.app.routers.users import router as users_router
 from backend.app.routers.stars import router as stars_router
@@ -11,6 +13,8 @@ from backend.app.routers.achievements import router as achievements_router
 from backend.app.routers.topics import router as topics_router
 
 app = FastAPI()
+
+
 
 @app.get("/")
 def read_root():
@@ -45,3 +49,4 @@ app.include_router(topics_router)
 
 logger = logging.getLogger("uvicorn")
 logger.level = logging.INFO
+

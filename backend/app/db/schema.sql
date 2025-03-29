@@ -27,8 +27,8 @@ CREATE TABLE IF NOT EXISTS topics_table (
     uid TEXT NOT NULL, -- ユーザーIDを追加
     topic_name TEXT NOT NULL,
     start_date DATE NOT NULL, 
-    end_date DATE NOT NULL
-
+    end_date DATE NOT NULL,
+    FOREIGN KEY (uid) REFERENCES users (uid) -- 外部キー制約を追加
 );
 
 CREATE TABLE IF NOT EXISTS goals_table (
