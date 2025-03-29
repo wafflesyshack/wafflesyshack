@@ -21,37 +21,39 @@ export default function AuthTabs() {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.tabButtons}>
-        <button
-          className={`${styles.tabButton} ${
-            activeTab === 'login' ? styles.tabButtonActive : ''
-          }`}
-          onClick={() => {
-            setActiveTab('login');
-            setShowEmailLogin(false); // ログインタブ選択時にメールログインを非表示にする
-          }}
-        >
-          ログイン
-        </button>
-        <button
-          className={`${styles.tabButton} ${
-            activeTab === 'signup' ? styles.tabButtonActive : ''
-          }`}
-          onClick={() => setActiveTab('signup')}
-        >
-          新規登録
-        </button>
+    <>
+      <div className={styles.container}>
+        <div className={styles.tabButtons}>
+          <button
+            className={`${styles.tabButton} ${
+              activeTab === 'login' ? styles.tabButtonActive : ''
+            }`}
+            onClick={() => {
+              setActiveTab('login');
+              setShowEmailLogin(false); // ログインタブ選択時にメールログインを非表示にする
+            }}
+          >
+            ログイン
+          </button>
+          <button
+            className={`${styles.tabButton} ${
+              activeTab === 'signup' ? styles.tabButtonActive : ''
+            }`}
+            onClick={() => setActiveTab('signup')}
+          >
+            新規登録
+          </button>
+        </div>
+        {activeTab === 'login' ? (
+          <LoginForm
+            onLoginSuccess={handleLoginSuccess}
+            showEmailLogin={showEmailLogin}
+            setShowEmailLogin={setShowEmailLogin} // setShowEmailLogin を渡す
+          />
+        ) : (
+          <SignupForm onSignupSuccess={handleSignupSuccess} />
+        )}
       </div>
-      {activeTab === 'login' ? (
-        <LoginForm
-          onLoginSuccess={handleLoginSuccess}
-          showEmailLogin={showEmailLogin}
-          setShowEmailLogin={setShowEmailLogin} // setShowEmailLogin を渡す
-        />
-      ) : (
-        <SignupForm onSignupSuccess={handleSignupSuccess} />
-      )}
-    </div>
+    </>
   );
 }

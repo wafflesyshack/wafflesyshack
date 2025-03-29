@@ -98,8 +98,7 @@ const GoalCard: React.FC<GoalCardProps> = ({ goalData, className, style }) => {
       )}
       {isRecordModalOpen && selectedGoal && (
         <>
-          <div className={styles.modalOverlay} />{' '}
-          {/* カレンダーを暗くする背景 */}
+          <div className={styles.modalOverlay} />
           <RecordGoalModal
             goal={selectedGoal}
             onRecord={handleRecordGoal}
