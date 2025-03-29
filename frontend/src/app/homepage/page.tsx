@@ -5,22 +5,49 @@ import GoalList from '../../../components/GoalList';
 import CalendarShelf from '../../../components/CalendarShelf';
 import StarSky from '../../../components/StarSky';
 import styles from './home.module.css';
+import { auth } from '../../../libs/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
 export default function HomePage() {
   const [goals, setGoals] = useState([]);
   const [calendarData, setCalendarData] = useState([]);
   const [stars, setStars] = useState([]);
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchData();
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        setUserId(user.uid);
+      } else {
+        setUserId(null);
+      }
+    });
+    return () => unsubscribe();
   }, []);
 
-  const fetchData = async () => {
+  useEffect(() => {
+    if (userId) {
+      fetchData(userId);
+    }
+  }, [userId]);
+
+  const fetchData = async (uid: string) => {
     try {
+      const token = await auth.currentUser?.getIdToken();
+      if (!token) {
+        throw new Error('認証されていません');
+      }
+
       const [goalsRes, calendarRes, starsRes] = await Promise.all([
-        fetch('/api/goals'),
-        fetch('/api/calendar'),
-        fetch('/api/stars'),
+        fetch(`/api/goals/${uid}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        fetch(`/api/calendar/${uid}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        fetch(`/api/stars/${uid}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
       ]);
 
       const [goalsData, calendarData, starsData] = await Promise.all([
@@ -36,28 +63,6 @@ export default function HomePage() {
       console.error('データ取得エラー:', error);
     }
   };
-
-  // 例: ユーザー情報取得
-  const fetchUserInfo = async (accessToken: string) => {
-    try {
-      const response = await fetch('http://localhost:8000/users/me/', {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      const data = await response.json();
-      console.log(data); // uid, email, providerを表示
-    } catch (error) {
-      console.error('ユーザー情報取得エラー:', error);
-    }
-  };
-
-  // 例: アクセストークンを取得してユーザー情報を取得
-  const accessToken = localStorage.getItem('access_token');
-  if (accessToken) {
-    fetchUserInfo(accessToken);
-  }
 
   return (
     <div className="relative h-screen">
