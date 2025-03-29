@@ -1,0 +1,74 @@
+.goalListContainer {
+  background-color: #3e4078;
+  border-radius: 20px;
+  padding: 20px;
+  width: 41vw;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  color: white;
+  transition: transform 0.3s ease-in-out;
+  position: relative;
+  margin: 0 auto;
+  height: 50vh; /* shelfContainer と同じ高さ */
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  margin-bottom: 300px;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.addButtonContainer {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
+.addButton {
+  background: white;
+  color: black;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease-in-out;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.addButton:hover {
+  transform: scale(1.1);
+}
+
+.addButton:active {
+  transform: scale(0.9);
+}
+
+.goalItems {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.goalItem {
+  padding: 1rem;
+  background: white;
+  color: black;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.goalItem:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
