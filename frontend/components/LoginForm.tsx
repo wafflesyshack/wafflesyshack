@@ -10,7 +10,7 @@ import {
 } from 'firebase/auth';
 import { useEffect } from 'react';
 import styles from './AuthTab.module.css';
-import { useRouter } from 'next/navigation'; // useRouter のインポート
+import { useRouter } from 'next/navigation';
 
 interface LoginFormProps {
   onLoginSuccess: () => void;
@@ -26,7 +26,7 @@ export default function LoginForm({
   const [user] = useAuthState(auth);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const router = useRouter(); // useRouter の初期化
+  const router = useRouter();
 
   useEffect(() => {
     if (user) {
@@ -38,20 +38,22 @@ export default function LoginForm({
     try {
       const userCredential = await signInWithPopup(auth, googleProvider);
       const user = userCredential.user;
+      const token = await user.getIdToken(); // ID トークンを取得
       const response = await fetch('http://localhost:8000/login_user/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // ID トークンをヘッダーに追加
         },
         body: JSON.stringify({
-          uid: user.uid, // Firebaseのuidを使用
+          uid: user.uid,
           email: user.email,
-          provider: 'google', // または 'google'
+          provider: 'google',
         }),
       });
       const data = await response.json();
-      localStorage.setItem('access_token', data.access_token); // トークンを保存
-      router.push(`/users/${user.uid}`); // uid を使用して遷移
+      localStorage.setItem('access_token', data.access_token);
+      router.push(`/users/${user.uid}`);
       onLoginSuccess();
     } catch (error) {
       console.error('Googleログインエラー:', error);
@@ -67,20 +69,22 @@ export default function LoginForm({
         password
       );
       const user = userCredential.user;
+      const token = await user.getIdToken(); // ID トークンを取得
       const response = await fetch('http://localhost:8000/login_user/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // ID トークンをヘッダーに追加
         },
         body: JSON.stringify({
-          uid: user.uid, // Firebaseのuidを使用
+          uid: user.uid,
           email: user.email,
-          provider: 'email', // または 'google'
+          provider: 'email',
         }),
       });
       const data = await response.json();
-      localStorage.setItem('access_token', data.access_token); // トークンを保存
-      router.push(`/users/${user.uid}`); // uid を使用して遷移
+      localStorage.setItem('access_token', data.access_token);
+      router.push(`/users/${user.uid}`);
       onLoginSuccess();
     } catch (error) {
       console.error('Emailログインエラー:', error);
