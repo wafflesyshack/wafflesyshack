@@ -38,12 +38,14 @@ const Header = () => {
             />
           </button>
         </Link>
-        
         <Link href="/">
-         <span className={`text-white ${kaiseiOpti.className} text-xl font-bold`}>
-           夜空の記録
-         </span>
+        <img
+          src="/images/logo.png"
+          alt="Twinkle Days Logo"
+          className="w-full h-14 object-cover" 
+        />
         </Link>
+
         
         {user ? (
           <button
