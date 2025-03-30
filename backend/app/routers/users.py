@@ -1,9 +1,15 @@
+from requests import request
 from fastapi import APIRouter, HTTPException, Depends, Request
-from firebase_admin import auth
+import firebase_admin
+from firebase_admin import auth,credentials
 from backend.app.database import get_db
 from backend.app.schemas import User
 import sqlite3
 router = APIRouter()
+
+cred = credentials.Certificate("backend/key.json")  # JSONファイルのパス
+firebase_admin.initialize_app(cred)
+
 @router.post("/register_user/")
 async def register_user(user: User, db: sqlite3.Connection = Depends(get_db)):
     cursor = db.cursor()
@@ -32,37 +38,22 @@ async def get_user_data(uid: str, request: Request, db: sqlite3.Connection = Dep
             raise HTTPException(status_code=404, detail="User not found")
         return {"uid": uid, "email": user[1], "provider": user[2]}
     except Exception as e:
+        print(f"Token verification error: {e}")
         raise HTTPException(status_code=401, detail="Unauthorized")
 @router.post("/login_user/")
-async def login_user(user: User, db: sqlite3.Connection = Depends(get_db)):
-    cursor = db.cursor()
-    cursor.execute("SELECT uid FROM users WHERE uid = ? AND email = ?", (user.uid, user.email))
-    existing_user = cursor.fetchone()
-    if existing_user is None:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    return {"message": "Login successful"}
-
-#@router.post("/items", response_model=AddItemResponse)
-#async def add_item(name: str = Form(...), category: str = Form(...), 
-#                   image: UploadFile = File(...), db: sqlite3.Connection = Depends(get_db)):
-#    
-#    if not name:
-#        raise HTTPException(status_code=400, detail="name is required")
-#
-#    image_name = await hash_and_rename_image(image)
-#    add_item_to_db(db, name, category, image_name)
-#
-#    return {"message": f"Item added: {name}, {category}, {image_name}"}
-
-
-
-
-#下はあおか用のメモ
-
-#目標一覧の取得
-
-#カレンダー情報の取得
-
-#星空情報の取得
-
-#目標詳細画面への遷移
+async def login_user(user: User,request:Request, db: sqlite3.Connection = Depends(get_db)):
+    try:
+        token = request.headers.get('Authorization').split('Bearer ')[1]
+        decoded_token = auth.verify_id_token(token)
+        if decoded_token['uid'] != user.uid:
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+        cursor = db.cursor()
+        cursor.execute("SELECT uid FROM users WHERE uid = ?", (user.uid,))
+        existing_user = cursor.fetchone()
+        custom_token = auth.create_custom_token(user.uid)
+        if existing_user is None:
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+        return {"message": "Login successful", "access_token": custom_token.decode()} #トークンを返すように修正
+    except Exception as e:
+        print(f"Token verification error: {e}")
+        raise HTTPException(status_code=401, detail="Unauthorized")
