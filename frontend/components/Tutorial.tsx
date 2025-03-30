@@ -15,7 +15,8 @@ const Tutorial: React.FC<TutorialProps> = ({ onClose }) => {
       <div className={`${styles.modal} ${kaiseiOpti.className}`}>
         <h2>ようこそ</h2>
         <p>
-          このアプリでは、目標を達成するたびに星が空に追加されます！目標を設定して、達成するたびに星空を輝かせていきましょう。
+          このアプリでは、目標を達成するたびに星が空に追加されます！<br/>
+          あなたの星できれいな夜空をつくりましょう。
         </p>
         <button onClick={onClose} className={styles["close-button"]}> {/* 修正されたクラス名 */}
           閉じる
