@@ -3,13 +3,18 @@ import logging
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
+
+import uvicorn
 from backend.app.database import setup_database
 from backend.app.routers.users import router as users_router
 from backend.app.routers.stars import router as stars_router
 from backend.app.routers.goals import router as goals_router
 from backend.app.routers.achievements import router as achievements_router
+from backend.app.routers.topics import router as topics_router
 
 app = FastAPI()
+
+
 
 @app.get("/")
 def read_root():
@@ -29,8 +34,8 @@ origins = [
 ]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=False,
+    allow_origins=origins,  # フロントエンドのオリジン
+    allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
 )
@@ -40,6 +45,8 @@ app.include_router(users_router)
 app.include_router(stars_router)
 app.include_router(goals_router)
 app.include_router(achievements_router)
+app.include_router(topics_router)
 
 logger = logging.getLogger("uvicorn")
 logger.level = logging.INFO
+
