@@ -5,6 +5,12 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import styles from './page.module.css';
 import Confetti from 'react-confetti';
 import { useWindowSize } from 'react-use'; // react-use をインストールしてください
+import { Kaisei_Opti } from 'next/font/google';
+
+const kaiseiOpti = Kaisei_Opti({
+    weight: ['400', '700'],
+    subsets: ['latin'],
+  });
 
 const StarGetPage: React.FC = () => {
   const router = useRouter();
@@ -84,7 +90,7 @@ const StarGetPage: React.FC = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={`${kaiseiOpti.className} ${styles.container}`}>
       {showConfetti && (
         <Confetti
           width={width}
