@@ -1,5 +1,11 @@
 import React, { useMemo } from 'react';
 import styles from './Calendar.module.css';
+import { Kaisei_Opti } from 'next/font/google';
+
+const kaiseiOpti = Kaisei_Opti({
+    weight: ['400', '700'],
+    subsets: ['latin'],
+  });
 
 interface CalendarProps {
   selectedMonth: number; // 選択された月を受け取る
@@ -50,7 +56,7 @@ const HomeCalendar: React.FC<CalendarProps> = ({ selectedMonth, data, className,
   }, [year, month]);
 
   return (
-    <div className={`${styles.calendar} ${className}`} style={style}>
+    <div className={`${styles.calendar} ${className} ${kaiseiOpti.className}`} style={style}>
       <div className={styles.header}>
         <span>
           {today.toLocaleString('en-US', { month: 'long' })} {year}
