@@ -31,11 +31,13 @@ export default function GoalList({
   endDate,
 }: GoalListProps) {
   const [topics, setTopics] = useState<Topic[]>([]);
+  const [uid, setUid] = useState<string | null>(null); // uid を state に追加
   const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
+        setUid(user.uid); // uid を state に保存
         fetchTopics(user.uid);
       } else {
         console.error('ログインしてください');
@@ -45,10 +47,12 @@ export default function GoalList({
     return () => unsubscribe();
   }, []);
 
-  const fetchTopics = async (uid: string) => {
+  const fetchTopics = async (currentUid: string) => {
+    // uid を引数として受け取る
     try {
-      // GET リクエストを送信
-      const response = await fetch(`http://localhost:8000/topics/?uid=${uid}`);
+      const response = await fetch(
+        `http://localhost:8000/topics/?uid=${currentUid}`
+      );
       if (response.ok) {
         const data: Topic[] = await response.json();
         setTopics(data);
@@ -80,7 +84,13 @@ export default function GoalList({
           <div
             key={topic.topic_id}
             className={styles.goalItem}
-            onClick={() => router.push(`/goal/${topic.topic_id}`)}
+            onClick={() => {
+              if (uid) {
+                router.push(`/goal/${topic.topic_id}?uid=${uid}`); // uid を渡す
+              } else {
+                console.error('uid が取得できませんでした');
+              }
+            }}
           >
             {topic.topic_name}
             {topicName && <p>追加されたトピック: {topicName}</p>}

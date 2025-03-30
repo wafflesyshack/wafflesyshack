@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './GoalCard.module.css';
 import AddGoalModal from './AddGoalModal';
@@ -20,7 +20,8 @@ interface GoalCardProps {
   totalDays: number;
   className?: string;
   style?: React.CSSProperties;
-  goalData: GoalData; // goalData を prop として追加
+  goalData: GoalData;
+  userId: number; // userId プロパティを追加
 }
 
 const GoalCard: React.FC<GoalCardProps> = ({
@@ -30,7 +31,8 @@ const GoalCard: React.FC<GoalCardProps> = ({
   totalDays,
   className,
   style,
-  goalData, // goalData を prop として受け取る
+  goalData,
+  userId, // userId を props として受け取る
 }) => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
@@ -67,6 +69,30 @@ const GoalCard: React.FC<GoalCardProps> = ({
     closeRecordModal();
   };
 
+  const [userGoals, setUserGoals] = useState<
+    { id: number; name: string; link: string }[]
+  >([]);
+
+  useEffect(() => {
+    const fetchUserGoals = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8000/goals/?uid=${userId}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setUserGoals(data.goals);
+        } else {
+          console.error('目標の取得に失敗しました');
+        }
+      } catch (error) {
+        console.error('目標の取得中にエラーが発生しました:', error);
+      }
+    };
+
+    fetchUserGoals();
+  }, [userId]);
+
   return (
     <div className={`${styles.goalCard} ${className}`} style={style}>
       <div className={styles.goalTitle}>
@@ -77,7 +103,7 @@ const GoalCard: React.FC<GoalCardProps> = ({
       </div>
 
       <div className={styles.goalButtons}>
-        {localGoals.map((goal) => (
+        {userGoals.map((goal) => (
           <button
             key={goal.id}
             className={styles.goalButton}
@@ -103,7 +129,11 @@ const GoalCard: React.FC<GoalCardProps> = ({
       {isAddModalOpen && (
         <>
           <div className={styles.modalOverlay} />
-          <AddGoalModal onAdd={handleAddGoal} onCancel={closeAddModal} />
+          <AddGoalModal
+            userId={userId}
+            onAdd={handleAddGoal}
+            onCancel={closeAddModal}
+          />
         </>
       )}
       {isRecordModalOpen && selectedGoal && (

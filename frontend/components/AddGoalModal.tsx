@@ -1,10 +1,12 @@
+'use client';
+
 import React, { useState } from 'react';
 import styles from './GoalCard.module.css';
 
 interface AddGoalModalProps {
   onAdd: (goal: { id: number; name: string; link: string }) => void;
   onCancel: () => void;
-  userId: number;
+  userId: number; // userId プロパティを追加
 }
 
 const AddGoalModal: React.FC<AddGoalModalProps> = ({
@@ -18,14 +20,16 @@ const AddGoalModal: React.FC<AddGoalModalProps> = ({
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch('/routers/goal_post', {
+      const response = await fetch('http://localhost:8000/goals/', {
+        // エンドポイントを修正
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams({
-          user_id: userId.toString(),
+          uid: userId.toString(),
           goal_name: `${goalDetail} (${goalQuantity} ${goalUnit})`,
+          topic_id: '1', // topic_id を追加
           goal_quantity: goalQuantity.toString(),
           goal_detail: goalDetail,
           start_date: new Date().toISOString().split('T')[0],

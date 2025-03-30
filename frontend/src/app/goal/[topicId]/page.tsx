@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import styles from './goalDetail.module.css';
 import Image from 'next/image';
 import backgroundImage from '../../../../public/images/background.jpg';
@@ -39,6 +39,8 @@ const GoalDetail: React.FC = () => {
   const topicId = params.topicId as string;
   const [topic, setTopic] = useState<Topic | null>(null);
   const [loading, setLoading] = useState(true);
+  const searchParams = useSearchParams();
+  const uid = searchParams.get('uid');
   const [isGoalCardCollapsed, setIsGoalCardCollapsed] = useState(false);
   const [isCalendarCollapsed, setIsCalendarCollapsed] = useState(false);
   const [stars, setStars] = useState<
@@ -127,7 +129,7 @@ const GoalDetail: React.FC = () => {
         </button>
         <GoalCard
           goalName={topic.topic_name}
-          goalData={goalData} // goalData を props として渡す
+          goalData={goalData}
           continuousDays={goalData.continuousDays}
           totalDays={goalData.totalDays}
           className={isGoalCardCollapsed ? styles['goalCard.collapsed'] : ''}
@@ -136,6 +138,7 @@ const GoalDetail: React.FC = () => {
             opacity: isGoalCardCollapsed ? '0' : '1',
             overflow: 'hidden',
           }}
+          userId={uid ? parseInt(uid) : 0} // uid を props として渡す
         />
         <button
           className={`${styles.toggleButton} ${styles.calendarToggleButton}`}
