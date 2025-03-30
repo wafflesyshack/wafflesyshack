@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation'; // useRouterをインポート
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from './GoalCard.module.css';
 import AddGoalModal from './AddGoalModal';
 import RecordGoalModal from './RecordGoalModal';
@@ -20,12 +20,26 @@ interface GoalData {
 }
 
 interface GoalCardProps {
-  goalData: GoalData;
+  goalName: string;
+  goals: { id: number; name: string; link: string }[];
+  continuousDays: number;
+  totalDays: number;
   className?: string;
   style?: React.CSSProperties;
+  goalData: GoalData;
+  userId: number; // userId プロパティを追加
 }
 
-const GoalCard: React.FC<GoalCardProps> = ({ goalData, className, style }) => {
+const GoalCard: React.FC<GoalCardProps> = ({
+  goalName,
+  goals,
+  continuousDays,
+  totalDays,
+  className,
+  style,
+  goalData,
+  userId, // userId を props として受け取る
+}) => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
   const [localGoals, setLocalGoals] = useState(goalData.goals);
@@ -55,24 +69,47 @@ const GoalCard: React.FC<GoalCardProps> = ({ goalData, className, style }) => {
     closeAddModal();
   };
 
-  // 記録ボタンが押された時の処理（goalButton の記録ボタンのみ）
   const handleRecordGoal = (rate: number) => {
     console.log(`達成率: ${rate}%`);
     router.push('/star-get');
     closeRecordModal();
   };
 
+  const [userGoals, setUserGoals] = useState<
+    { id: number; name: string; link: string }[]
+  >([]);
+
+  useEffect(() => {
+    const fetchUserGoals = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8000/goals/?uid=${userId}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setUserGoals(data.goals);
+        } else {
+          console.error('目標の取得に失敗しました');
+        }
+      } catch (error) {
+        console.error('目標の取得中にエラーが発生しました:', error);
+      }
+    };
+
+    fetchUserGoals();
+  }, [userId]);
+
   return (
     <div className={`${styles.goalCard} ${className} ${kaiseiOpti.className}`} style={style}>
       <div className={styles.goalTitle}>
-        <div className={styles.goalName}>{goalData.goalName}</div>
+        <div className={styles.goalName}>{goalName}</div>
         <button className={styles.addButton} onClick={openAddModal}>
           +
         </button>
       </div>
 
       <div className={styles.goalButtons}>
-        {localGoals.map((goal) => (
+        {userGoals.map((goal) => (
           <button
             key={goal.id}
             className={styles.goalButton}
@@ -97,15 +134,17 @@ const GoalCard: React.FC<GoalCardProps> = ({ goalData, className, style }) => {
 
       {isAddModalOpen && (
         <>
-          <div className={styles.modalOverlay} />{' '}
-          {/* カレンダーを暗くする背景 */}
-          <AddGoalModal onAdd={handleAddGoal} onCancel={closeAddModal} />
+          <div className={styles.modalOverlay} />
+          <AddGoalModal
+            userId={userId}
+            onAdd={handleAddGoal}
+            onCancel={closeAddModal}
+          />
         </>
       )}
       {isRecordModalOpen && selectedGoal && (
         <>
-          <div className={styles.modalOverlay} />{' '}
-          {/* カレンダーを暗くする背景 */}
+          <div className={styles.modalOverlay} />
           <RecordGoalModal
             goal={selectedGoal}
             onRecord={handleRecordGoal}
