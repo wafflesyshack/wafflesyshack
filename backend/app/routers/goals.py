@@ -94,16 +94,16 @@ def get_all_goals(uid: str, db: sqlite3.Connection = Depends(get_db)):
     return {"goals": goals_list}
 
 @router.get("/goals/{goal_id}", response_model=Goal)
-def get_single_item(goal_id: int, db: sqlite3.Connection = Depends(get_db)):
-    """指定された goal_id に対応する goal の情報を返す関数"""
+def get_single_item(goal_id: int, uid: str, db: sqlite3.Connection = Depends(get_db)): # uid を引数に追加
+    """指定された goal_id と uid に対応する goal の情報を返す関数"""
 
     cursor = db.cursor()
 
     query = """
-        SELECT * FROM goals_table WHERE goal_id = ?
+        SELECT * FROM goals_table WHERE goal_id = ? AND uid = ?
     """
 
-    cursor.execute(query, (goal_id,))
+    cursor.execute(query, (goal_id, uid)) # uid をクエリに追加
 
     row = cursor.fetchone()
 

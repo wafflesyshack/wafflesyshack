@@ -7,12 +7,14 @@ import router from 'next/router';
 
 interface RecordGoalModalProps {
   goalId: number;
+  userId: string | undefined; // userId を props として受け取る
   onRecord: (rate: number) => void;
   onCancel: () => void;
 }
 
 const RecordGoalModal: React.FC<RecordGoalModalProps> = ({
   goalId,
+  userId, // userId を props として受け取る
   onRecord,
   onCancel,
 }) => {
@@ -21,18 +23,25 @@ const RecordGoalModal: React.FC<RecordGoalModalProps> = ({
   const [goalUnit, setGoalUnit] = useState('ページ');
   const [maxGoalQuantity, setMaxGoalQuantity] = useState(0);
   const [achievementRate, setAchievementRate] = useState(0);
+  const router = useRouter(); // router を初期化
 
   useEffect(() => {
     const fetchGoalDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/goals/${goalId}`);
-        if (response.ok) {
-          const data = await response.json();
-          setGoalDetail(data.goal_detail);
-          setMaxGoalQuantity(data.goal_quantity);
-          setGoalUnit(data.goal_unit); // goal_unit を設定
+        if (userId) {
+          const response = await fetch(
+            `http://localhost:8000/goals/${goalId}?uid=${userId}` // uid をクエリパラメータに追加
+          );
+          if (response.ok) {
+            const data = await response.json();
+            setGoalDetail(data.goal_detail);
+            setMaxGoalQuantity(data.goal_quantity);
+            setGoalUnit(data.goal_unit);
+          } else {
+            console.error('Failed to fetch goal details:', response.statusText);
+          }
         } else {
-          console.error('Failed to fetch goal details:', response.statusText);
+          console.error('userId が設定されていません');
         }
       } catch (error) {
         console.error('Error fetching goal details:', error);
@@ -40,7 +49,7 @@ const RecordGoalModal: React.FC<RecordGoalModalProps> = ({
     };
 
     fetchGoalDetails();
-  }, [goalId]);
+  }, [goalId, userId]);
 
   useEffect(() => {
     if (maxGoalQuantity > 0) {

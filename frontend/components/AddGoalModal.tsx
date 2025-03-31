@@ -4,7 +4,12 @@ import React, { useState } from 'react';
 import styles from './GoalCard.module.css';
 
 interface AddGoalModalProps {
-  onAdd: (goal: { id: number; name: string; link: string }) => void;
+  onAdd: (goal: {
+    id: number;
+    name: string;
+    link: string;
+    goal_name: string; // goal_name を追加
+  }) => void;
   onCancel: () => void;
   userId: number;
 }
@@ -14,6 +19,7 @@ const AddGoalModal: React.FC<AddGoalModalProps> = ({
   onCancel,
   userId,
 }) => {
+  const [goalName, setGoalName] = useState('');
   const [goalDetail, setGoalDetail] = useState('');
   const [goalQuantity, setGoalQuantity] = useState(0);
   const [goalUnit, setGoalUnit] = useState('ページ');
@@ -27,26 +33,24 @@ const AddGoalModal: React.FC<AddGoalModalProps> = ({
         },
         body: new URLSearchParams({
           uid: userId.toString(),
-          goal_name: `<span class="math-inline">\{goalDetail\} \(</span>{goalQuantity} ${goalUnit})`,
+          goal_name: `<span class="math-inline">\{goalName\} \(</span>{goalQuantity} ${goalUnit})`,
           topic_id: '1',
           goal_quantity: goalQuantity.toString(),
           goal_detail: goalDetail,
           start_date: new Date().toISOString().split('T')[0],
           end_date: new Date().toISOString().split('T')[0],
-          goal_unit: goalUnit,
+          goal_unit: goalUnit, // goal_unit を追加
         }),
       });
 
       if (response.ok) {
         const data = await response.json();
-        // 親コンポーネントに新しい目標データを渡す
         onAdd({
           id: data.goal_id,
           name: data.goal_name,
           link: `/goal-detail/${data.goal_id}`,
+          goal_name: goalName, // goal_name を渡す
         });
-        // モーダルを閉じる
-        onCancel();
       } else {
         console.error('Failed to add goal:', response.statusText);
       }
@@ -60,11 +64,11 @@ const AddGoalModal: React.FC<AddGoalModalProps> = ({
       <div className={styles.modalContent}>
         <h2>目標追加</h2>
         <label>
-          目標詳細:
+          目標名: {/* 目標名を入力するための input 要素を追加 */}
           <input
             type="text"
-            value={goalDetail}
-            onChange={(e) => setGoalDetail(e.target.value)}
+            value={goalName}
+            onChange={(e) => setGoalName(e.target.value)}
           />
         </label>
         <label>
@@ -86,6 +90,15 @@ const AddGoalModal: React.FC<AddGoalModalProps> = ({
             <option value="回数">回数</option>
           </select>
         </label>
+        <label>
+          メモ:
+          <input
+            type="text"
+            value={goalDetail}
+            onChange={(e) => setGoalDetail(e.target.value)}
+          />
+        </label>
+
         <div className={styles.modalButtons}>
           <button onClick={handleSubmit}>追加</button>
           <button onClick={onCancel}>キャンセル</button>
