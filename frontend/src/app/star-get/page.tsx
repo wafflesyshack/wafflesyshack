@@ -17,21 +17,9 @@ const StarGetPage: React.FC = () => {
   const searchParams = useSearchParams();
   const [starColor, setStarColor] = useState('#ffffff');
   const [starType, setStarType] = useState(1);
-  const [starLight, setStarLight] = useState('一等星');
   const [achievementRate, setAchievementRate] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
-  const { width, height } = useWindowSize(); // 画面サイズを取得
-
-  useEffect(() => {
-    if (achievementRate === 50) {
-      setShowConfetti(true);
-      const timer = setTimeout(() => {
-        setShowConfetti(false);
-      }, 5000); // 5秒後に停止
-
-      return () => clearTimeout(timer); // コンポーネントがアンマウントされたときにタイマーをクリア
-    }
-  }, [achievementRate]);
+  const { width, height } = useWindowSize();
 
   useEffect(() => {
     // クエリパラメータから achievementRate を取得
@@ -42,7 +30,24 @@ const StarGetPage: React.FC = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    // 達成率に基づいて星の種類と明るさを設定
+    if (achievementRate === 50) {
+      setShowConfetti(true);
+      const timer = setTimeout(() => {
+        setShowConfetti(false);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [achievementRate]);
+
+  useEffect(() => {
+    const rate = searchParams.get('achievementRate');
+    if (rate) {
+      setAchievementRate(parseInt(rate));
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
     if (achievementRate >= 1 && achievementRate <= 49) {
       setStarType(3);
       setStarLight('三等星');
@@ -58,11 +63,9 @@ const StarGetPage: React.FC = () => {
   const handleRecord = async () => {
     const achievementId = parseInt(searchParams.get('achievementId') || '0');
 
-    // 星の座標をランダムに生成
     const starPositionX = Math.floor(Math.random() * window.innerWidth);
     const starPositionY = Math.floor(Math.random() * window.innerHeight);
 
-    // バックエンドAPIに星のデータを送信
     const response = await fetch(`/routers/stars/${achievementId}`, {
       method: 'POST',
       headers: {
@@ -73,18 +76,18 @@ const StarGetPage: React.FC = () => {
         star_position_x: String(starPositionX),
         star_position_y: String(starPositionY),
         star_color: starColor,
-        star_light: starLight,
+        star_light: String(starType), // starType を送信
       }),
     });
 
     if (response.ok) {
-      // 成功した場合、goal-detailページに遷移
-      const audio = new Audio('/sounds/キラッ2.mp3'); // 音声ファイルのパスを修正
+      const audio = new Audio('/sounds/キラッ2.mp3');
       audio.play();
 
-      router.push(`/goal-detail/${achievementId}`);
+      router.push(
+        `/goal-detail/${achievementId}?achievementRate=${achievementRate}`
+      ); // achievementRate を goal-detail ページに渡す
     } else {
-      // エラー処理
       console.error('Failed to save star data.');
     }
   };
@@ -95,15 +98,18 @@ const StarGetPage: React.FC = () => {
         <Confetti
           width={width}
           height={height}
-          recycle={false} // 紙吹雪をリサイクルしない
-          numberOfPieces={200} // 紙吹雪の数を調整
+          recycle={false}
+          numberOfPieces={200}
         />
       )}
       <div className={styles.card}>
         <h1 className={styles.title}>星GET!!!</h1>
         <p className={styles.info}>達成度: {achievementRate}%</p>
         <p className={styles.info}>星の種類 : {starType}</p>
-        <p className={styles.info}>明るさ : {starLight}</p>
+        <p className={styles.info}>
+          明るさ :{' '}
+          {starType === 1 ? '一等星' : starType === 2 ? '二等星' : '三等星'}
+        </p>
         <label className={styles.label}>
           色 :
           <input

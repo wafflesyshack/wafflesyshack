@@ -40,8 +40,11 @@ CREATE TABLE IF NOT EXISTS goals_table (
     goal_detail TEXT, 
     start_date DATE NOT NULL, 
     end_date DATE NOT NULL, 
+    goal_unit TEXT,
     FOREIGN KEY (topic_id) 
-        REFERENCES topics_table (topic_id) 
+        REFERENCES topics_table (topic_id),
+    FOREIGN KEY (uid)
+        REFERENCES users (uid) -- uid を外部キー制約に追加
 );
 
 CREATE TABLE IF NOT EXISTS achievements_table (

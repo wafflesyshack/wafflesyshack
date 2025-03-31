@@ -27,7 +27,7 @@ interface GoalCardProps {
   className?: string;
   style?: React.CSSProperties;
   goalData: GoalData;
-  userId: number; // userId プロパティを追加
+  userId: string | undefined; // userId を string | undefined に変更
 }
 
 const GoalCard: React.FC<GoalCardProps> = ({
@@ -38,34 +38,36 @@ const GoalCard: React.FC<GoalCardProps> = ({
   className,
   style,
   goalData,
-  userId, // userId を props として受け取る
+  userId,
 }) => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
   const [localGoals, setLocalGoals] = useState(goalData.goals);
-  const [selectedGoal, setSelectedGoal] = useState<{
-    id: number;
-    name: string;
-    link: string;
-  } | null>(null);
+  const [selectedGoal, setSelectedGoal] = useState<number | null>(null); // selectedGoal を number | null に変更
 
   const router = useRouter();
 
   const openAddModal = () => setIsAddModalOpen(true);
   const closeAddModal = () => setIsAddModalOpen(false);
 
-  const openRecordModal = (goal: {
+  const openRecordModal = (goalId: number) => {
+    setSelectedGoal(goalId);
+    setIsRecordModalOpen(true);
+  };
+
+  const closeRecordModal = () => {
+    setIsRecordModalOpen(false);
+  };
+
+  const handleAddGoal = (goal: {
     id: number;
     name: string;
     link: string;
+    goal_detail: string;
+    goal_unit: string;
+    goal_name: string;
   }) => {
-    setSelectedGoal(goal);
-    setIsRecordModalOpen(true);
-  };
-  const closeRecordModal = () => setIsRecordModalOpen(false);
-
-  const handleAddGoal = (goal: { id: number; name: string; link: string }) => {
-    setLocalGoals([...localGoals, goal]);
+    setUserGoals([...userGoals, goal]);
     closeAddModal();
   };
 
@@ -76,20 +78,31 @@ const GoalCard: React.FC<GoalCardProps> = ({
   };
 
   const [userGoals, setUserGoals] = useState<
-    { id: number; name: string; link: string }[]
+    {
+      id: number;
+      name: string;
+      link: string;
+      goal_detail: string;
+      goal_unit: string;
+      goal_name: string;
+    }[]
   >([]);
 
   useEffect(() => {
     const fetchUserGoals = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:8000/goals/?uid=${userId}`
-        );
-        if (response.ok) {
-          const data = await response.json();
-          setUserGoals(data.goals);
+        if (userId) {
+          const response = await fetch(
+            `http://localhost:8000/goals/?uid=${userId}` // userId が undefined でないことを確認
+          );
+          if (response.ok) {
+            const data = await response.json();
+            setUserGoals(data.goals);
+          } else {
+            console.error('目標の取得に失敗しました');
+          }
         } else {
-          console.error('目標の取得に失敗しました');
+          console.error('userId が設定されていません');
         }
       } catch (error) {
         console.error('目標の取得中にエラーが発生しました:', error);
@@ -113,12 +126,13 @@ const GoalCard: React.FC<GoalCardProps> = ({
           <button
             key={goal.id}
             className={styles.goalButton}
-            onClick={() => openRecordModal(goal)}
+            onClick={() => openRecordModal(goal.id)}
           >
-            {goal.name}
+            {goal.goal_name}
           </button>
         ))}
       </div>
+
       <div className={styles.goalProgress}>
         <div className={styles.progressItem}>
           連続
@@ -142,11 +156,13 @@ const GoalCard: React.FC<GoalCardProps> = ({
           />
         </>
       )}
+
       {isRecordModalOpen && selectedGoal && (
         <>
           <div className={styles.modalOverlay} />
           <RecordGoalModal
-            goal={selectedGoal}
+            goalId={selectedGoal}
+            userId={userId} // userId を渡す
             onRecord={handleRecordGoal}
             onCancel={closeRecordModal}
           />
