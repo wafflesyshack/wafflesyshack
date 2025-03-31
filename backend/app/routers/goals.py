@@ -17,17 +17,20 @@ def convert_row_to_goal(row: sqlite3.Row) -> Goal:
         goal_detail=row["goal_detail"],
         start_date=row["start_date"],
         end_date=row["end_date"],
+        goal_unit=row["goal_unit"], # goal_unit を追加
     )
+
 
 @router.post("/goals/", response_model=Goal)
 async def add_goals(
-    uid: str = Form(...),  # uid を必須パラメータとして修正
+    uid: str = Form(...),
     goal_name: str = Form(...),
-    topic_id: int = Form(...),  # topic_id を必須パラメータとして修正
+    topic_id: int = Form(...),
     goal_quantity: int = Form(...),
     goal_detail: str = Form(...),
     start_date: date = Form(...),
     end_date: date = Form(...),
+    goal_unit: str = Form(...), # goal_unit を追加
     db: sqlite3.Connection = Depends(get_db),
 ):
     """goals_table にデータを追加し、追加した goal の情報を返す関数"""
@@ -45,11 +48,11 @@ async def add_goals(
         cursor = db.cursor()
 
         query = """
-            INSERT INTO goals_table (uid, goal_name, topic_id, goal_quantity, goal_detail, start_date, end_date)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO goals_table (uid, goal_name, topic_id, goal_quantity, goal_detail, start_date, end_date, goal_unit)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """
 
-        cursor.execute(query, (uid, goal_name, topic_id, goal_quantity, goal_detail, start_date, end_date))
+        cursor.execute(query, (uid, goal_name, topic_id, goal_quantity, goal_detail, start_date, end_date, goal_unit))
 
         db.commit()
 
@@ -70,6 +73,9 @@ async def add_goals(
 @router.get("/goals/", response_model=Goals)
 def get_all_goals(uid: str, db: sqlite3.Connection = Depends(get_db)):
     """保存された goal を一覧として出すための関数"""
+
+    if not uid:
+        raise HTTPException(status_code=400, detail="uid is required")
 
     cursor = db.cursor()
 
@@ -107,3 +113,24 @@ def get_single_item(goal_id: int, db: sqlite3.Connection = Depends(get_db)):
     cursor.close()
 
     return convert_row_to_goal(row)
+
+@router.get("/goals/{goal_id}/quantity", response_model=dict)
+def get_goal_quantity(goal_id: int, db: sqlite3.Connection = Depends(get_db)):
+    """指定された goal_id に対応する goal の目標達成量を返す関数"""
+
+    cursor = db.cursor()
+
+    query = """
+        SELECT goal_quantity FROM goals_table WHERE goal_id = ?
+    """
+
+    cursor.execute(query, (goal_id,))
+
+    row = cursor.fetchone()
+
+    if row is None:
+        raise HTTPException(status_code=404, detail="Goal not found")
+
+    cursor.close()
+
+    return {"goal_quantity": row[0]}

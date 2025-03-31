@@ -21,7 +21,7 @@ interface GoalCardProps {
   className?: string;
   style?: React.CSSProperties;
   goalData: GoalData;
-  userId: number; // userId プロパティを追加
+  userId: number | undefined; // userId を number | undefined に変更
 }
 
 const GoalCard: React.FC<GoalCardProps> = ({
@@ -32,7 +32,7 @@ const GoalCard: React.FC<GoalCardProps> = ({
   className,
   style,
   goalData,
-  userId, // userId を props として受け取る
+  userId,
 }) => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
@@ -56,10 +56,20 @@ const GoalCard: React.FC<GoalCardProps> = ({
     setSelectedGoal(goal);
     setIsRecordModalOpen(true);
   };
-  const closeRecordModal = () => setIsRecordModalOpen(false);
+  const closeRecordModal = (newGoal?: {
+    id: number;
+    name: string;
+    link: string;
+  }) => {
+    if (newGoal) {
+      setUserGoals([...userGoals, newGoal]); // 新しい目標を一覧に追加
+      setSelectedGoal(newGoal); // 新しい目標を選択状態に設定
+    }
+    setIsRecordModalOpen(false);
+  };
 
   const handleAddGoal = (goal: { id: number; name: string; link: string }) => {
-    setLocalGoals([...localGoals, goal]);
+    setUserGoals([...userGoals, goal]); // 追加された目標を一覧に追加
     closeAddModal();
   };
 
@@ -70,7 +80,14 @@ const GoalCard: React.FC<GoalCardProps> = ({
   };
 
   const [userGoals, setUserGoals] = useState<
-    { id: number; name: string; link: string }[]
+    {
+      id: number;
+      name: string;
+      link: string;
+      goal_detail: string;
+      goal_unit: string;
+      goal_name: string;
+    }[]
   >([]);
 
   useEffect(() => {
@@ -90,7 +107,12 @@ const GoalCard: React.FC<GoalCardProps> = ({
       }
     };
 
-    fetchUserGoals();
+    if (userId !== undefined) {
+      // userId が undefined でない場合のみ fetchUserGoals を実行
+      fetchUserGoals();
+    } else {
+      console.error('userId が設定されていません');
+    }
   }, [userId]);
 
   return (
@@ -109,7 +131,7 @@ const GoalCard: React.FC<GoalCardProps> = ({
             className={styles.goalButton}
             onClick={() => openRecordModal(goal)}
           >
-            {goal.name}
+            {goal.goal_detail} {/* goal_detail を表示 */}
           </button>
         ))}
       </div>
@@ -131,7 +153,7 @@ const GoalCard: React.FC<GoalCardProps> = ({
           <div className={styles.modalOverlay} />
           <AddGoalModal
             userId={userId}
-            onAdd={handleAddGoal}
+            onAdd={handleAddGoal} // handleAddGoal を渡す
             onCancel={closeAddModal}
           />
         </>

@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from datetime import date
-from typing import Optional
+from typing import Optional,List
 
 class User(BaseModel):
     uid: str
@@ -19,23 +19,30 @@ class TopicCreate(BaseModel):
     start_date: date
     end_date: date
 
-class Goals(BaseModel):
-    goals: list   # これは「goals というキーを持つ辞書」を定義している
-
 class Goal(BaseModel):
-    uid: str  # user_id を uid に変更
-    goal_id:int
+    goal_id: int
+    uid: str
     goal_name: str
-    goal_quantity: Optional[int] = None
+    topic_id: int
+    goal_quantity: Optional[int] = None # goal_quantity を必須にする場合は Optional[int] を削除
     goal_detail: str
     start_date: date
     end_date: date
+    goal_unit: str # goal_unit を追加
+
+
+class Goals(BaseModel):
+   goals: List[Goal]  # Goal モデルのリストであることを明示的に指定
 
 class Achievement(BaseModel):
-    goal_id:int
-    achievement_detail:Optional[str] = None
+    achievement_id: int
+    goal_id: int
     achievement_date: date
-    achievement_quantity:int
+    achievement_quantity: int
+    achievement_detail: str
+
+class Achievements(BaseModel):
+    achievements: List[Achievement]
     
 class Star(BaseModel):
     achievement_id:int    
