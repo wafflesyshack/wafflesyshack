@@ -1,5 +1,11 @@
 import React, { useMemo } from 'react';
 import styles from './Calendar.module.css';
+import { Kaisei_Opti } from 'next/font/google';
+
+const kaiseiOpti = Kaisei_Opti({
+    weight: ['400', '700'],
+    subsets: ['latin'],
+});
 
 interface CalendarProps {
   selectedMonth: number; // 選択された月を受け取る
@@ -17,18 +23,14 @@ const HomeCalendar: React.FC<CalendarProps> = ({ selectedMonth, data, className,
 
   const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
   const dates = useMemo(() => {
-    // 月の最初の日の曜日を取得
     const firstDay = new Date(year, month, 1).getDay();
-    // 月の日数を取得
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    // 前月の日数を取得
     const prevMonthDays = new Date(year, month, 0).getDate();
 
     const result = [];
     
     // 前月の日付を追加
     for (let i = 0; i < firstDay; i++) {
-      // 前月の日付計算
       const prevMonthDate = prevMonthDays - firstDay + i + 1;
       const prevMonth = month === 0 ? 11 : month - 1;  // 1月の場合は前月が12月になる
       result.push({ date: prevMonthDate, month: prevMonth });
@@ -50,12 +52,14 @@ const HomeCalendar: React.FC<CalendarProps> = ({ selectedMonth, data, className,
   }, [year, month]);
 
   return (
-    <div className={`${styles.calendar} ${className}`} style={style}>
+    <div className={`${styles.calendar} ${className} ${kaiseiOpti.className}`} style={style}>
+      {/* 選択された月と年を表示 */}
       <div className={styles.header}>
-        <span>
-          {today.toLocaleString('en-US', { month: 'long' })} {year}
+        <span className="text-lg font-semibold">
+          {`${new Date(year, month).toLocaleString('default', { month: 'long' })} ${year}`}
         </span>
       </div>
+      {/* 曜日表示 */}
       <div className={styles.days}>
         {days.map((day) => (
           <div key={day} className={styles.day}>
@@ -63,6 +67,7 @@ const HomeCalendar: React.FC<CalendarProps> = ({ selectedMonth, data, className,
           </div>
         ))}
       </div>
+      {/* 日付表示 */}
       <div className={styles.dates}>
         {dates.map((item, index) => {
           const isToday =

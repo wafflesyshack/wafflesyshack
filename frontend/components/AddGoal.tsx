@@ -5,6 +5,12 @@ import { useRouter } from 'next/navigation';
 import GoalInput from './GoalInput';
 import SubmitButton from './SubmitButton';
 import { auth } from '../libs/firebase';
+import { Kaisei_Opti } from 'next/font/google';
+
+const kaiseiOpti = Kaisei_Opti({
+    weight: ['400', '700'],
+    subsets: ['latin'],
+  });
 
 interface TopicForm {
   topic_name: string;
@@ -60,7 +66,7 @@ export default function AddGoal() {
       });
 
       if (!topicResponse.ok) {
-        setError('Topicの追加に失敗しました');
+        setError('トピックの追加に失敗しました');
         return;
       }
 
@@ -78,16 +84,16 @@ export default function AddGoal() {
   };
 
   return (
-    <div className="bg-[#3E4078]/80 p-8 rounded-lg shadow-lg w-130">
+    <div className={`${kaiseiOpti.className} bg-[#3E4078]/80 p-8 rounded-lg shadow-lg w-130`}>
       <h2 className="text-2xl font-bold text-center mb-4 text-white">
-        目標topic作成
+        目標トピック作成
       </h2>
 
       {error && <div className="text-red-500 mb-4">{error}</div>}
 
       <form onSubmit={handleSubmit}>
         <GoalInput
-          label="目標topic"
+          label="目標トピック"
           type="text"
           name="topic_name"
           value={goal.topic_name}

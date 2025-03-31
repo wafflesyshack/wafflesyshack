@@ -24,10 +24,25 @@
   background-color: #0070f3;
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  font-size: 1.3rem;
   cursor: pointer;
   margin-left: auto; /* 右側の要素を右端に配置 */
+  transition: background-color 0.3s ease;
+  transition: transform 0.2s ease-in-out;
+  position: relative;
+  top: -10px; 
+  right: -5px;
+}
+
+.addButton:hover {
+  transform: scale(1.1);
+  background-color: #005bb5;
+}
+.addButton:active {
+  transform: scale(0.9);
 }
 
 .goalButtons {
@@ -46,6 +61,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   min-width: 120px; /* goalButton の最小幅を設定 */
   position: relative; /* 星を配置するための基準 */
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
 .goalButton::before {
@@ -93,6 +109,7 @@
   justify-content: center;
   align-items: center;
   z-index: 1000; /* カレンダーよりも大きい値を設定 */
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
 .modalContent {
@@ -110,32 +127,39 @@
   background: none;
   cursor: pointer;
   color: black; /* 色を黒に設定 */
+  transition: color 0.3s ease;
 }
 
 .closeButton:hover {
   cursor: pointer; /* ホバー時にカーソルをポインターに変更 */
   z-index: 1001;
+  color: red;
+
 }
 
 .modal h2 {
   margin-bottom: 15px;
   color: black;
   text-align: center;
+  font-weight: bold; 
 }
 
 .modal label {
   display: block;
   margin-bottom: 10px;
   color: black;
+  text-align: right;
+  margin-right: 20px;
 }
 
 .modal input,
 .modal select {
-  width: 100%;
+  width: 70%;
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
   color: black;
+  text-align: center;
 }
 
 .modalButtons {
@@ -155,9 +179,17 @@
   background-color: #0070f3;
   color: white;
 }
+.modalButtons button:first-child:hover {
+  background-color: #005bb5; /* ホバー時に色を濃く */
+  transform: scale(1.05); /* 少し拡大してクリックしやすく */
+}
 
 .modalButtons button:last-child {
   background-color: #f0f0f0;
+}
+.modalButtons button:last-child:hover {
+  background-color: #d6d6d6; /* ホバー時に色を少し濃く */
+  transform: scale(1.05);
 }
 
 .modalOverlay {

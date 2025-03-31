@@ -5,6 +5,12 @@ import { useRouter } from 'next/navigation';
 import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
 import styles from './AuthTab.module.css';
+import { Kaisei_Opti } from 'next/font/google';
+
+const kaiseiOpti = Kaisei_Opti({
+    weight: ['400', '700'],
+    subsets: ['latin'],
+  });
 
 export default function AuthTabs() {
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
@@ -22,7 +28,7 @@ export default function AuthTabs() {
 
   return (
     <>
-      <div className={styles.container}>
+      <div className={`${styles.container} ${kaiseiOpti.className}`}>
         <div className={styles.tabButtons}>
           <button
             className={`${styles.tabButton} ${

@@ -41,22 +41,28 @@ const AuthPage = () => {
   }, []);
 
   return (
-    <div className={styles.container}>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <h1 className={`${styles.h1} ${kaiseiOpti.className}`}>夜空の記録</h1>
-        <div style={{ width: '400px', height: '400px' }}>
-          {' '}
-          {/* 幅と高さを指定 */}
-          <AuthTabs />
-        </div>
-      </div>
+ <div className={styles.container}>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '10px', // ロゴとフォームの間の余白を調整
+    }}
+  >
+    <div style={{ width: '400px' }}>
+      <img 
+        src="/images/homelogo.PNG" 
+        alt="ロゴ" 
+        style={{ width: '100%', height: 'auto', display: 'block', marginBottom: '10px' }} 
+      />
     </div>
+    <div style={{ width: '400px' }}>
+      <AuthTabs />
+    </div>
+  </div>
+</div>
+
   );
 };
 

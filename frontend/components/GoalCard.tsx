@@ -5,6 +5,12 @@ import { useRouter } from 'next/navigation';
 import styles from './GoalCard.module.css';
 import AddGoalModal from './AddGoalModal';
 import RecordGoalModal from './RecordGoalModal';
+import { Kaisei_Opti } from 'next/font/google';
+
+const kaiseiOpti = Kaisei_Opti({
+    weight: ['400', '700'],
+    subsets: ['latin'],
+  });
 
 interface GoalData {
   goalName: string;
@@ -107,7 +113,7 @@ const GoalCard: React.FC<GoalCardProps> = ({
   }, [userId]);
 
   return (
-    <div className={`${styles.goalCard} ${className}`} style={style}>
+    <div className={`${styles.goalCard} ${className} ${kaiseiOpti.className}`} style={style}>
       <div className={styles.goalTitle}>
         <div className={styles.goalName}>{goalName}</div>
         <button className={styles.addButton} onClick={openAddModal}>

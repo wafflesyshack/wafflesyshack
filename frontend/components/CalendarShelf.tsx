@@ -4,6 +4,13 @@ import { useState, useEffect } from 'react';
 import HomeCalendar from './HomeCalendar';
 import { useRouter } from 'next/navigation';
 import styles from './CalendarShelf.module.css'; // CSSをインポート
+import { Kaisei_Opti } from 'next/font/google';
+
+const kaiseiOpti = Kaisei_Opti({
+    weight: ['400', '700'],
+    subsets: ['latin'],
+  });
+
 
 interface CalendarProps {
   data: any[]; // カレンダーのデータ形式に合わせて型を設定
@@ -42,9 +49,9 @@ const CalendarShelf: React.FC<CalendarProps> = ({ data }) => {
   };
 
   return (
-    <div className={styles.shelfContainer}>
+    <div className={`${styles.shelfContainer} ${kaiseiOpti.className}`}>
       <div className={styles.header}>
-        <h2 className={styles.title}>Memories</h2>
+        <h2 className={styles.title}>記録</h2> 
       </div>
 
       <div className={styles.shelf}>
@@ -72,9 +79,12 @@ const CalendarShelf: React.FC<CalendarProps> = ({ data }) => {
         <div
           className={`${styles.calendarWrapper} ${showCalendar ? styles.show : ''}`}
         >
-          <button className={styles.backButton} onClick={handleBackToShelf}>
-          ◀︎もどる
-          </button>
+<button
+  className={`${styles.backButton} ${kaiseiOpti.className}`}
+  onClick={handleBackToShelf}
+>
+  ◀︎もどる
+</button>
           <HomeCalendar selectedMonth={selectedMonth} data={data} />
         </div>
       )}
