@@ -5,3 +5,5 @@ venv/
 *.log
 .env.local
 waffle-syshack-firebase-adminsdk-fbsvc-1ea26f3ac4.json
+.DS_Store
+.gitignore
