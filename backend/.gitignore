@@ -1,0 +1,5 @@
+__pycache__/
+.venv/
+.DS_Store
+.env.local
+waffle-syshack-firebase-adminsdk-fbsvc-1ea26f3ac4.json

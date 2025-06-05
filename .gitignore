@@ -1,7 +1,1 @@
-node_modules
-node_modules
-venv/
-*.pyc
-*.log
-.env.local
-waffle-syshack-firebase-adminsdk-fbsvc-1ea26f3ac4.json
+.DS_Store
