@@ -38,13 +38,11 @@ const Header = () => {
             />
           </button>
         </Link>
-        <Link href="/">
         <img
           src="/images/logo.png"
           alt="Twinkle Days Logo"
-          className="w-full h-14 object-cover" 
+          className="w-80 h-14 object-cover" 
         />
-        </Link>
 
         
         {user ? (

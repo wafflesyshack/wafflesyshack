@@ -19,11 +19,11 @@ export default function AuthTabs() {
   const router = useRouter();
 
   const handleLoginSuccess = () => {
-    router.push('/');
+    router.push('/homepage');
   };
 
   const handleSignupSuccess = () => {
-    router.push('/');
+    router.push('/homepage');
   };
 
   return (
